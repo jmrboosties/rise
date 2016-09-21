@@ -81,7 +81,6 @@ public class TestDrag extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
 	            ClipData.Item item = new ClipData.Item((CharSequence) v.getTag());
-
 	            ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
 
 	            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
