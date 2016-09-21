@@ -1,22 +1,21 @@
 package io.rise.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.ClipData;
 import android.content.ClipDescription;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.HashMap;
 
@@ -37,8 +36,8 @@ public class TestDrag extends AppCompatActivity {
     }
 
     private void initLayout() {
-        LinearLayout top = (LinearLayout) findViewById(R.id.top);
-        LinearLayout bottom = (LinearLayout) findViewById(R.id.bottom);
+	    FrameLayout top = (FrameLayout) findViewById(R.id.top);
+	    FrameLayout bottom = (FrameLayout) findViewById(R.id.bottom);
 
 	    top.setTag("top");
 		bottom.setTag("bottom");
@@ -65,12 +64,14 @@ public class TestDrag extends AppCompatActivity {
 	}
 
     private ImageView buildImageView() {
-        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics());
+        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
         int margins = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
 
         ImageView iv = new ImageView(this);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+	    iv.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+
+	    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size);
         params.setMargins(margins, margins, margins, margins);
 
         iv.setLayoutParams(params);
@@ -97,8 +98,6 @@ public class TestDrag extends AppCompatActivity {
             }
 
         });
-
-//	    iv.setOnDragListener(new MyDragListener());
 
         return iv;
     }
@@ -133,21 +132,10 @@ public class TestDrag extends AppCompatActivity {
 					case DragEvent.ACTION_DROP:
 						Print.log("view with tag " + dragging.getTag() + " dropped in " +  v.getTag());
 
-						//Place
-						ViewGroup vg = (ViewGroup) v;
-						if(vg.indexOfChild(dragging) < 0) {
-							//If index is less than 0 means is not present
-							ViewGroup currentParent = (ViewGroup) dragging.getParent();
-							currentParent.removeView(dragging);
-
-							vg.addView(dragging);
-							return false;
-						}
-						else {
-							//Already has item, do nothing
-							return false;
-						}
-
+						return dropView((ViewGroup) v, dragging, event);
+					case DragEvent.ACTION_DRAG_LOCATION :
+//						Print.log("location xy", event.getX(), event.getY());
+						break;
 					default:
 						return false;
 				}
@@ -158,27 +146,65 @@ public class TestDrag extends AppCompatActivity {
 
 	}
 
-	private static class RiseDragShadowBuilder extends View.DragShadowBuilder {
+	private boolean dropView(ViewGroup parent, final View droppedView, DragEvent dragEvent) {
+		//Place
+		if(parent.indexOfChild(droppedView) < 0) {
+			//If index is less than 0 means is not present
+			ViewGroup currentParent = (ViewGroup) droppedView.getParent();
+			currentParent.removeView(droppedView);
 
-//		private static Drawable shadow;
+			//Get destination before committing view
+			Point destination = getDestinationInParent(parent);
 
-		public RiseDragShadowBuilder(View v) {
-			super(v);
-//			shadow = new ColorDrawable(Color.LTGRAY);
+			parent.addView(droppedView);
+
+			droppedView.setTranslationX(dragEvent.getX() - (droppedView.getWidth() / 2) - parent.getPaddingLeft());
+			droppedView.setTranslationY(dragEvent.getY() - (droppedView.getHeight() / 2) - parent.getPaddingTop());
+
+			droppedView.setAlpha(.75f);
+
+			AnimatorSet animatorSet = new AnimatorSet();
+			animatorSet.playTogether(
+					ObjectAnimator.ofFloat(droppedView, "translationX", droppedView.getTranslationX(), destination.x),
+					ObjectAnimator.ofFloat(droppedView, "translationY", droppedView.getTranslationY(), destination.y)
+			);
+
+			double distanceToTravel = Math.hypot(droppedView.getTranslationX(), droppedView.getRotationY());
+			animatorSet.setDuration((long) (distanceToTravel));
+
+			animatorSet.addListener(new AnimatorListenerAdapter() {
+
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					super.onAnimationEnd(animation);
+					droppedView.setAlpha(1f);
+				}
+
+			});
+
+			animatorSet.start();
+			return true;
+		}
+		else {
+			//Already has item, do nothing
+			return false;
+		}
+	}
+
+	private Point getDestinationInParent(ViewGroup parent) {
+		Point point = new Point();
+
+		if(parent.getChildCount() > 0) {
+			View lastChild = parent.getChildAt(parent.getChildCount() - 1);
+			point.x = lastChild.getRight() + ((FrameLayout.LayoutParams) lastChild.getLayoutParams()).rightMargin;
+			point.y = lastChild.getTop() - ((FrameLayout.LayoutParams) lastChild.getLayoutParams()).topMargin - parent.getPaddingTop();
+		}
+		else {
+			point.x = 0;
+			point.y = 0;
 		}
 
-		@Override
-		public void onProvideShadowMetrics (Point size, Point touch) {
-			super.onProvideShadowMetrics(size, touch);
-		}
-
-		@Override
-		public void onDrawShadow(Canvas canvas) {
-			super.onDrawShadow(canvas);
-			// Draws the ColorDrawable in the Canvas passed in from the system.
-//			shadow.draw(canvas);
-		}
-
+		return point;
 	}
 
 }
