@@ -1,4 +1,4 @@
-package io.rise.adapter;
+package fitness.classmate.adapter;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -12,16 +12,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import io.rise.R;
-import io.rise.base.BaseActivity;
-import io.rise.util.Print;
+import fitness.classmate.base.BaseActivity;
+import fitness.classmate.R;
 
-public class ClassComponentAdapter extends RecyclerView.Adapter<ClassComponentAdapter.ComponentViewHolder> {
+public class ClassComponentPoolAdapter extends RecyclerView.Adapter<ClassComponentPoolAdapter.ComponentViewHolder> {
 
 	private BaseActivity mActivity;
 	private ArrayList<String> mItems = new ArrayList<>(); //TODO change to real items
+	private OnComponentWidthCalculatedCallback mWidthCalculatedCallback;
 
-	public ClassComponentAdapter(BaseActivity activity) {
+	public ClassComponentPoolAdapter(BaseActivity activity) {
 		mActivity = activity;
 	}
 
@@ -45,6 +45,10 @@ public class ClassComponentAdapter extends RecyclerView.Adapter<ClassComponentAd
 		return mItems.size();
 	}
 
+	public void setWidthCalculatedCallback(OnComponentWidthCalculatedCallback widthCalculatedCallback) {
+		mWidthCalculatedCallback = widthCalculatedCallback;
+	}
+
 	class ComponentViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView mTextView;
@@ -58,6 +62,10 @@ public class ClassComponentAdapter extends RecyclerView.Adapter<ClassComponentAd
 				@Override
 				public void onGlobalLayout() {
 					mTextView.setWidth(mTextView.getHeight() * 2);
+
+					if(mWidthCalculatedCallback != null)
+						mWidthCalculatedCallback.onComponentWidthCalculated(mTextView.getHeight() * 2);
+
 					mTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 				}
 
@@ -90,6 +98,12 @@ public class ClassComponentAdapter extends RecyclerView.Adapter<ClassComponentAd
 			mTextView.setText(mItems.get(getAdapterPosition()));
 			mTextView.setTag(mItems.get(getAdapterPosition()));
 		}
+
+	}
+
+	public interface OnComponentWidthCalculatedCallback {
+
+		void onComponentWidthCalculated(int width);
 
 	}
 

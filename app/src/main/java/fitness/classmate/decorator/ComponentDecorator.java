@@ -1,4 +1,4 @@
-package io.rise.decorator;
+package fitness.classmate.decorator;
 
 import android.content.Context;
 import android.graphics.Rect;

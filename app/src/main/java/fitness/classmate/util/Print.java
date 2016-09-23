@@ -1,13 +1,13 @@
-package io.rise.util;
+package fitness.classmate.util;
 
 import android.util.Log;
 
-import io.rise.constant.Constants;
+import fitness.classmate.constant.Constants;
 
 public class Print {
 
-	private static final String DEBUG_TAG = "*** RISE APP ***";
-	private static final String SHORT_TAG = "(RISE)";
+	private static final String DEBUG_TAG = "*** CLASSMATE ***";
+	private static final String SHORT_TAG = "(CLASSMATE)";
 
 	/**
 	 * Used for logging whatever in log cat.

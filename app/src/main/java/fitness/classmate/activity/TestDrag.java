@@ -1,4 +1,4 @@
-package io.rise.activity;
+package fitness.classmate.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,8 +19,8 @@ import android.widget.ImageView;
 
 import java.util.HashMap;
 
-import io.rise.R;
-import io.rise.util.Print;
+import fitness.classmate.util.Print;
+import fitness.classmate.R;
 
 public class TestDrag extends AppCompatActivity {
 

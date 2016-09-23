@@ -1,4 +1,4 @@
-package io.rise.constant;
+package fitness.classmate.constant;
 
 public class Constants {
 

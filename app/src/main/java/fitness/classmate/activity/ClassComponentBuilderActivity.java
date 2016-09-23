@@ -1,4 +1,4 @@
-package io.rise.activity;
+package fitness.classmate.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import io.rise.R;
-import io.rise.adapter.ClassComponentAdapter;
-import io.rise.base.BaseActivity;
-import io.rise.decorator.ComponentDecorator;
-import io.rise.util.Print;
+import fitness.classmate.adapter.ClassComponentPoolAdapter;
+import fitness.classmate.base.BaseActivity;
+import fitness.classmate.decorator.ComponentDecorator;
+import fitness.classmate.util.Print;
+import fitness.classmate.R;
 
 public class ClassComponentBuilderActivity extends BaseActivity {
 
@@ -53,7 +53,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		RecyclerView.LayoutManager classManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 		classChart.setLayoutManager(classManager);
 
-		ClassComponentAdapter classComponentAdapter = new ClassComponentAdapter(this);
+		ClassComponentPoolAdapter classComponentAdapter = new ClassComponentPoolAdapter(this);
 
 		ArrayList<String> components = new ArrayList<>();
 		components.add("Sprint");
@@ -79,6 +79,14 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		components.add("Jumps");
 
 		classComponentAdapter.setItems(components);
+		classComponentAdapter.setWidthCalculatedCallback(new ClassComponentPoolAdapter.OnComponentWidthCalculatedCallback() {
+
+			@Override
+			public void onComponentWidthCalculated(int width) {
+
+			}
+
+		});
 
 		componentPool.setAdapter(classComponentAdapter);
 
