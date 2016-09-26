@@ -12,22 +12,33 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import fitness.classmate.adapter.ClassComponentPoolAdapter;
+import fitness.classmate.adapter.ClassGraphAdapter;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.decorator.ComponentDecorator;
+import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
 import fitness.classmate.R;
+import rx.Observable;
+import rx.functions.Func2;
+import rx.subjects.PublishSubject;
 
 public class ClassComponentBuilderActivity extends BaseActivity {
 
 	private FrameLayout mClassMask;
+	private RecyclerView mClassGraph;
+
+	private ClassGraphAdapter mClassGraphAdapter;
 
 	private ComponentDecorator mComponentDecorator;
+
+	private int mCurrentClassDx;
 
 	@Override
 	protected void prepareActivity() {
@@ -48,53 +59,108 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		mClassMask = (FrameLayout) findViewById(R.id.accb_class_mask);
 		mClassMask.setVisibility(View.GONE);
 
-		RecyclerView classChart = (RecyclerView) findViewById(R.id.accb_class);
+		mClassGraph = (RecyclerView) findViewById(R.id.accb_class);
 
 		RecyclerView.LayoutManager classManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-		classChart.setLayoutManager(classManager);
+		mClassGraph.setLayoutManager(classManager);
+		mClassGraph.addItemDecoration(mComponentDecorator);
 
 		ClassComponentPoolAdapter classComponentAdapter = new ClassComponentPoolAdapter(this);
 
 		ArrayList<String> components = new ArrayList<>();
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
-		components.add("Sprint");
-		components.add("Climb");
-		components.add("Jumps");
+		components.add("Apple");
+		components.add("Carrot");
+		components.add("Raine");
+		components.add("Finn");
+		components.add("Apple");
+		components.add("Carrot");
+		components.add("Raine");
+		components.add("Finn");
+		components.add("Apple");
+		components.add("Carrot");
+		components.add("Raine");
+		components.add("Finn");
+
+		final PublishSubject<Integer> widthCalcSubject = PublishSubject.create();
 
 		classComponentAdapter.setItems(components);
 		classComponentAdapter.setWidthCalculatedCallback(new ClassComponentPoolAdapter.OnComponentWidthCalculatedCallback() {
 
 			@Override
 			public void onComponentWidthCalculated(int width) {
-
+				widthCalcSubject.onNext(width);
 			}
 
 		});
 
 		componentPool.setAdapter(classComponentAdapter);
 
-		setupDragListener(classChart);
+		final PublishSubject<Integer> heightCalcSubject = PublishSubject.create();
+
+		mClassGraph.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+			@Override
+			public void onGlobalLayout() {
+				heightCalcSubject.onNext(mClassGraph.getHeight());
+				mClassGraph.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+			}
+
+		});
+
+		Observable.zip(widthCalcSubject, heightCalcSubject, new Func2<Integer, Integer, Void>() {
+
+			@Override
+			public Void call(Integer width, Integer height) {
+				createClassGraphAdapter(width, height);
+
+				widthCalcSubject.onCompleted();
+				heightCalcSubject.onCompleted();
+				return null;
+			}
+
+		}).subscribe();
+
+		//noinspection deprecation
+		mClassGraph.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+
+				mCurrentClassDx += dx;
+				mCurrentClassDx = Math.max(0, mCurrentClassDx);
+				mCurrentClassDx = Math.min(mCurrentClassDx, mClassGraphAdapter.getEstimatedFullWidth());
+
+				Print.log("current class dx", mCurrentClassDx);
+			}
+
+		});
+
+		setupDragListener();
 	}
 
-	private void setupDragListener(ViewGroup viewGroup) {
-		viewGroup.setOnDragListener(new View.OnDragListener() {
+	private void createClassGraphAdapter(int width, int height) {
+		mClassGraphAdapter = new ClassGraphAdapter(this, mComponentDecorator.getSpacing(), width, height);
+
+		mClassGraph.setAdapter(mClassGraphAdapter);
+
+		ArrayList<String> componentStrings = new ArrayList<>();
+		componentStrings.add("Sprint");
+		componentStrings.add("Jumps");
+		componentStrings.add("Sprint");
+		componentStrings.add("Climb");
+		componentStrings.add("Jumps");
+		componentStrings.add("Sprint");
+
+		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		for(String s : componentStrings)
+			components.add(buildComponentFromString(s));
+
+		mClassGraphAdapter.setItems(components);
+	}
+
+	private void setupDragListener() {
+		mClassGraph.setOnDragListener(new View.OnDragListener() {
 
 			@Override
 			public boolean onDrag(View v, DragEvent event) {
@@ -120,10 +186,14 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 							break;
 						case DragEvent.ACTION_DRAG_EXITED:
 							Print.log("view with tag " + dragging.getTag() + " exited " +  v.getTag());
+							mClassGraphAdapter.onDragEnd();
 							break;
 						case DragEvent.ACTION_DROP:
 							Print.log("view with tag " + dragging.getTag() + " dropped in " +  v.getTag());
 							return dropView(dragging, event);
+						case DragEvent.ACTION_DRAG_LOCATION:
+							handleDragLocation(event);
+							break;
 						default:
 							return false;
 					}
@@ -133,6 +203,11 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 			}
 
 		});
+	}
+
+	private void handleDragLocation(DragEvent event) {
+		int positionInFullGraph = (int) (event.getX() + mCurrentClassDx);
+		mClassGraphAdapter.handleDragEnter(positionInFullGraph);
 	}
 
 	private boolean dropView(final View droppedView, DragEvent dragEvent) {
@@ -150,7 +225,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 			cloned.setLayoutParams(params);
 
 			//Get destination before committing view
-			Point destination = getDestinationInParent(mClassMask);
+			Point destination = getDestinationInParent(droppedView.getHeight());
 
 			mClassMask.addView(cloned);
 
@@ -175,8 +250,10 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 				public void onAnimationEnd(Animator animation) {
 					super.onAnimationEnd(animation);
 					cloned.setAlpha(1f);
-//					mClassMask.setVisibility(View.GONE);
-//					mClassMask.removeAllViews();
+					mClassMask.setVisibility(View.GONE);
+					mClassMask.removeAllViews();
+
+					mClassGraphAdapter.addItem(buildComponentFromString(cloned.getText().toString()));
 				}
 
 			});
@@ -190,18 +267,21 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		}
 	}
 
-	private Point getDestinationInParent(ViewGroup parent) {
+	//TODO remove this
+	private ClassmateClassComponent buildComponentFromString(String s) {
+		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
+		classmateClassComponent.setName(s);
+
+		return classmateClassComponent;
+	}
+
+	private Point getDestinationInParent(int draggingShadowHeight) {
 		Point point = new Point();
 
-		if(parent.getChildCount() > 0) {
-			View lastChild = parent.getChildAt(parent.getChildCount() - 1);
-			point.x = (int) (lastChild.getX() + lastChild.getRight() + mComponentDecorator.getSpacing());
-			point.y = lastChild.getTop() - parent.getPaddingTop();
-		}
-		else {
-			point.x = 0;
-			point.y = 0;
-		}
+		point.x = mClassGraphAdapter.getPositionOfPlaceholder(mCurrentClassDx);
+		point.y = mClassGraphAdapter.getGraphSectionHeight() - draggingShadowHeight - mComponentDecorator.getSpacing();
+
+		Print.log("calculated position", point);
 
 		return point;
 	}

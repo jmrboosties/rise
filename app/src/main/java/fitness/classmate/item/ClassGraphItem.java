@@ -1,20 +1,14 @@
 package fitness.classmate.item;
 
+import fitness.classmate.model.ClassmateClassComponent;
+
 public class ClassGraphItem {
 
-	private String mTitle;
+	private ClassmateClassComponent mClassComponent;
 	private int mType;
 
 	public static final int COMPONENT = 0;
 	public static final int PLACEHOLDER = 1;
-
-	public String getTitle() {
-		return mTitle;
-	}
-
-	public void setTitle(String title) {
-		mTitle = title;
-	}
 
 	public int getType() {
 		return mType;
@@ -24,4 +18,11 @@ public class ClassGraphItem {
 		mType = type;
 	}
 
+	public ClassmateClassComponent getClassComponent() {
+		return mClassComponent;
+	}
+
+	public void setClassComponent(ClassmateClassComponent classComponent) {
+		mClassComponent = classComponent;
+	}
 }
