@@ -70,16 +70,24 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		ArrayList<String> components = new ArrayList<>();
 		components.add("Apple");
 		components.add("Carrot");
-		components.add("Raine");
-		components.add("Finn");
 		components.add("Apple");
 		components.add("Carrot");
-		components.add("Raine");
-		components.add("Finn");
 		components.add("Apple");
 		components.add("Carrot");
-		components.add("Raine");
-		components.add("Finn");
+		components.add("Apple");
+		components.add("Carrot");
+		components.add("Apple");
+		components.add("Carrot");
+//		components.add("Raine");
+//		components.add("Finn");
+//		components.add("Apple");
+//		components.add("Carrot");
+//		components.add("Raine");
+//		components.add("Finn");
+//		components.add("Apple");
+//		components.add("Carrot");
+//		components.add("Raine");
+//		components.add("Finn");
 
 		final PublishSubject<Integer> widthCalcSubject = PublishSubject.create();
 
@@ -145,12 +153,11 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		mClassGraph.setAdapter(mClassGraphAdapter);
 
 		ArrayList<String> componentStrings = new ArrayList<>();
-		componentStrings.add("Sprint");
-		componentStrings.add("Jumps");
-		componentStrings.add("Sprint");
-		componentStrings.add("Climb");
-		componentStrings.add("Jumps");
-		componentStrings.add("Sprint");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
 
 		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
 		for(String s : componentStrings)
@@ -271,6 +278,9 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 	private ClassmateClassComponent buildComponentFromString(String s) {
 		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
 		classmateClassComponent.setName(s);
+
+		float intensity = s.length() / 8f;
+		classmateClassComponent.setIntensity(intensity);
 
 		return classmateClassComponent;
 	}

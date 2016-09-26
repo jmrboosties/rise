@@ -25,12 +25,12 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 	private BaseActivity mActivity;
 	private int mComponentWidth;
 	private int mGraphSectionHeight;
-	private int mHorizontalSpacing;
+	private int mSpacing;
 	private ArrayList<ClassGraphItem> mItems = new ArrayList<>();
 
-	public ClassGraphAdapter(BaseActivity activity, int horizontalSpacing, int childWidth, int maxHeight) {
+	public ClassGraphAdapter(BaseActivity activity, int spacing, int childWidth, int maxHeight) {
 		mActivity = activity;
-		mHorizontalSpacing = horizontalSpacing;
+		mSpacing = spacing;
 		mComponentWidth = childWidth;
 		mGraphSectionHeight = maxHeight;
 	}
@@ -84,7 +84,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 	 * @return the full pixel width of the recycler view (will extend off screen in most cases)
 	 */
 	public int getEstimatedFullWidth() {
-		return mItems.size() * (mComponentWidth + (mHorizontalSpacing * 2));
+		return mItems.size() * (mComponentWidth + (mSpacing * 2));
 	}
 
 	public void handleDragEnter(int positionInFullGraph) {
@@ -95,7 +95,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		//Crunch a value representing the position of the dragged object relative to the indices of the items in the recycler view
 		//Subtract half the width of one component to shift everything over to the left, allowing us to determine if the
 		//drag occurs on the left or right half of the component, which will alter behavior
-		float f = (positionInFullGraph - ((mComponentWidth + (mHorizontalSpacing * 2)) / 2)) / (float) (mComponentWidth + (mHorizontalSpacing * 2));
+		float f = (positionInFullGraph - ((mComponentWidth + (mSpacing * 2)) / 2)) / (float) (mComponentWidth + (mSpacing * 2));
 
 		//Round to find the index we will insert placeholder
 		int insertPlaceholderAt = f > 0 ? (int) Math.ceil(f) : 0;
@@ -153,7 +153,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		 * Get the x position of the placeholder relative to the screen (as opposed to the full graph view). To do this subtract current dx from
 		 * calculated position in graph, accounting for horizontal spacing
 		 */
-		return mHorizontalSpacing + (indexItWillBeDroppedIn * (mComponentWidth + (mHorizontalSpacing * 2))) - currentDx;
+		return mSpacing + (indexItWillBeDroppedIn * (mComponentWidth + (mSpacing * 2))) - currentDx;
 	}
 
 	@Override
@@ -190,11 +190,13 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 	private class ComponentViewHolder extends RecyclerView.ViewHolder {
 
+		private View mBar;
 		private TextView mComponentName;
 		private boolean mDragAreaVisible;
 
 		public ComponentViewHolder(View itemView) {
 			super(itemView);
+			mBar = itemView.findViewById(R.id.icgc_bar);
 
 			mComponentName = (TextView) itemView.findViewById(R.id.icgc_component_name);
 
@@ -205,9 +207,9 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 			Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.class_component_background);
 			drawable.setColorFilter(ContextCompat.getColor(mActivity, android.R.color.white), PorterDuff.Mode.MULTIPLY);
 
-			itemView.setBackground(drawable);
+			mBar.setBackground(drawable);
 
-			itemView.setOnLongClickListener(new View.OnLongClickListener() {
+			mBar.setOnLongClickListener(new View.OnLongClickListener() {
 
 				@Override
 				public boolean onLongClick(View v) {
@@ -218,7 +220,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			});
 
-			itemView.setOnTouchListener(new View.OnTouchListener() {
+			mBar.setOnTouchListener(new View.OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -244,12 +246,16 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			});
 
-			ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mComponentWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+			ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mComponentWidth, ViewGroup.LayoutParams.MATCH_PARENT);
 			itemView.setLayoutParams(params);
 		}
 
 		public void buildItem() {
-			mComponentName.setText(mItems.get(getAdapterPosition()).getClassComponent().getName());
+			ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
+
+			mComponentName.setText(component.getName());
+			mBar.getLayoutParams().height = (int) ((mGraphSectionHeight - (mSpacing * 2)) * component.getIntensity());
+			mBar.invalidate();
 		}
 
 	}
