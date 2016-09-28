@@ -25,6 +25,7 @@ import fitness.classmate.decorator.ComponentDecorator;
 import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
 import fitness.classmate.R;
+import fitness.classmate.view.ClassGraphLayoutManager;
 import rx.Observable;
 import rx.functions.Func2;
 import rx.subjects.PublishSubject;
@@ -61,7 +62,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 		mClassGraph = (RecyclerView) findViewById(R.id.accb_class);
 
-		RecyclerView.LayoutManager classManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+		ClassGraphLayoutManager classManager = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 		mClassGraph.setLayoutManager(classManager);
 		mClassGraph.addItemDecoration(mComponentDecorator);
 
@@ -138,8 +139,6 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 				mCurrentClassDx += dx;
 				mCurrentClassDx = Math.max(0, mCurrentClassDx);
 				mCurrentClassDx = Math.min(mCurrentClassDx, mClassGraphAdapter.getEstimatedFullWidth());
-
-				Print.log("current class dx", mCurrentClassDx);
 			}
 
 		});
@@ -149,10 +148,28 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 	private void createClassGraphAdapter(int width, int height) {
 		mClassGraphAdapter = new ClassGraphAdapter(this, mComponentDecorator.getSpacing(), width, height);
+		mClassGraphAdapter.setOnComponentDraggingCallback(new ClassGraphAdapter.OnComponentDraggingCallback() {
+
+			@Override
+			public void onComponentDragging(boolean dragging) {
+				((ClassGraphLayoutManager) mClassGraph.getLayoutManager()).setScrollingDisabled(dragging);
+			}
+
+		});
 
 		mClassGraph.setAdapter(mClassGraphAdapter);
 
 		ArrayList<String> componentStrings = new ArrayList<>();
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
 		componentStrings.add("Apple");
 		componentStrings.add("Carrot");
 		componentStrings.add("Dog");

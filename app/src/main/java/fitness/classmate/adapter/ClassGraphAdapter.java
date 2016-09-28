@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding.view.RxView;
+
 import java.util.ArrayList;
 
 import fitness.classmate.R;
@@ -19,6 +21,7 @@ import fitness.classmate.base.BaseActivity;
 import fitness.classmate.item.ClassGraphItem;
 import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
+import rx.functions.Action1;
 
 public class ClassGraphAdapter extends RecyclerView.Adapter {
 
@@ -27,6 +30,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 	private int mGraphSectionHeight;
 	private int mSpacing;
 	private ArrayList<ClassGraphItem> mItems = new ArrayList<>();
+	private OnComponentDraggingCallback mOnComponentDraggingCallback;
 
 	public ClassGraphAdapter(BaseActivity activity, int spacing, int childWidth, int maxHeight) {
 		mActivity = activity;
@@ -34,14 +38,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		mComponentWidth = childWidth;
 		mGraphSectionHeight = maxHeight;
 	}
-
-//	public void setComponentWidth(int componentWidth) {
-//		mComponentWidth = componentWidth;
-//	}
-//
-//	public void setGraphSectionHeight(int height) {
-//		mGraphSectionHeight = height;
-//	}
 
 	public void setItems(@NonNull ArrayList<ClassmateClassComponent> items) {
 		mItems.clear();
@@ -188,11 +184,17 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		return mGraphSectionHeight;
 	}
 
+	public void setOnComponentDraggingCallback(OnComponentDraggingCallback onComponentDraggingCallback) {
+		mOnComponentDraggingCallback = onComponentDraggingCallback;
+	}
+
 	private class ComponentViewHolder extends RecyclerView.ViewHolder {
 
 		private View mBar;
 		private TextView mComponentName;
 		private boolean mDragAreaVisible;
+
+		private int mCurrentDy;
 
 		public ComponentViewHolder(View itemView) {
 			super(itemView);
@@ -201,7 +203,9 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 			mComponentName = (TextView) itemView.findViewById(R.id.icgc_component_name);
 
 			final FrameLayout dragArea = (FrameLayout) itemView.findViewById(R.id.icgc_adjust_area);
-			dragArea.setVisibility(View.INVISIBLE);
+			dragArea.setVisibility(View.VISIBLE);
+
+			final int adjustAreaHeight = (int) mActivity.getResources().getDimension(R.dimen.adjust_area_height);
 
 			//Get background
 			Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.class_component_background);
@@ -238,13 +242,61 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			dragArea.setOnTouchListener(new View.OnTouchListener() {
 
+				float initialYTouch;
+				int initialHeight;
+
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					Print.log("drag area touched!");
-					return false;
+					switch(event.getAction()) {
+						case MotionEvent.ACTION_DOWN:
+							initialYTouch = event.getRawY();
+							initialHeight = mBar.getHeight();
+
+							if(mOnComponentDraggingCallback != null)
+								mOnComponentDraggingCallback.onComponentDragging(true);
+							break;
+						case MotionEvent.ACTION_MOVE:
+							float touchDy = initialYTouch - event.getRawY();
+
+							if(touchDy == 0)
+								break;
+
+							int minHeight = (int) (mComponentName.getHeight() + (mActivity.getResources().getDimension(R.dimen.four_dp) * 2));
+							int maxHeight = (mGraphSectionHeight - (mSpacing * 2));
+
+							int barHeight = (int) (initialHeight + touchDy);
+
+							barHeight = Math.max(minHeight, barHeight);
+							barHeight = Math.min(maxHeight, barHeight);
+
+							mBar.getLayoutParams().height = barHeight;
+							mBar.requestLayout();
+							break;
+						case MotionEvent.ACTION_UP:
+						case MotionEvent.ACTION_CANCEL:
+							if(mOnComponentDraggingCallback != null)
+								mOnComponentDraggingCallback.onComponentDragging(false);
+
+							Print.log("action triggered telling us to cancel");
+							break;
+					}
+
+					return true;
 				}
 
 			});
+
+			RxView.layoutChanges(mBar).doOnNext(new Action1<Void>() {
+
+				@Override
+				public void call(Void aVoid) {
+					int top = mBar.getTop();
+
+					dragArea.setY(top - (adjustAreaHeight / 2));
+					dragArea.invalidate();
+				}
+
+			}).subscribe();
 
 			ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mComponentWidth, ViewGroup.LayoutParams.MATCH_PARENT);
 			itemView.setLayoutParams(params);
@@ -273,5 +325,10 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 	}
 
+	public interface OnComponentDraggingCallback {
+
+		void onComponentDragging(boolean dragging);
+
+	}
 
 }
