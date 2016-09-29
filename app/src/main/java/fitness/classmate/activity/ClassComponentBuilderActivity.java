@@ -296,7 +296,9 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
 		classmateClassComponent.setName(s);
 
-		float intensity = s.length() / 8f;
+		float f = s.length() / 8f;
+		int intensity = Math.round(f * 4);
+
 		classmateClassComponent.setIntensity(intensity);
 
 		return classmateClassComponent;

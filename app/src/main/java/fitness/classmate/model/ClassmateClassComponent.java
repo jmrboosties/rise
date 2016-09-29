@@ -7,7 +7,9 @@ public class ClassmateClassComponent {
 	private String mName;
 	private ArrayList<ComponentNote> mComponentNotes;
 	private ComponentTrack mComponentTrack;
-	private float mIntensity = .5f;
+
+	//Only 1-5
+	private int mIntensity = 3;
 
 	public String getName() {
 		return mName;
@@ -33,11 +35,14 @@ public class ClassmateClassComponent {
 		mComponentTrack = componentTrack;
 	}
 
-	public float getIntensity() {
+	public int getIntensity() {
 		return mIntensity;
 	}
 
-	public void setIntensity(float intensity) {
+	public void setIntensity(int intensity) {
+		if(intensity < 1 || intensity > 5)
+			throw new IllegalArgumentException("intensity is 1-5");
+
 		mIntensity = intensity;
 	}
 

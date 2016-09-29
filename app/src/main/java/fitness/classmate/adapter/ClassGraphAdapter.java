@@ -1,6 +1,8 @@
 package fitness.classmate.adapter;
 
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -32,11 +34,40 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 	private ArrayList<ClassGraphItem> mItems = new ArrayList<>();
 	private OnComponentDraggingCallback mOnComponentDraggingCallback;
 
+	private int[] mHeights;
+
 	public ClassGraphAdapter(BaseActivity activity, int spacing, int childWidth, int maxHeight) {
 		mActivity = activity;
 		mSpacing = spacing;
 		mComponentWidth = childWidth;
 		mGraphSectionHeight = maxHeight;
+
+		crunchSnapHeights();
+	}
+
+	private void crunchSnapHeights() {
+		mHeights = new int[5];
+
+		//Max is normal height minus 1/8
+		int maxHeight = mGraphSectionHeight - (mSpacing * 2) - (mGraphSectionHeight / 16);
+
+		//Smallest is just enough to show the text
+		mHeights[0] = maxHeight / 10;
+
+		//Next 1/4
+		mHeights[1] = (int) (maxHeight * .25f);
+
+		//Half
+		mHeights[2] = maxHeight / 2;
+
+		//3/4
+		mHeights[3] = (int) (maxHeight * .75f);
+
+		//Full
+		mHeights[4] = maxHeight;
+
+		for(int i : mHeights)
+			Print.log("height", i);
 	}
 
 	public void setItems(@NonNull ArrayList<ClassmateClassComponent> items) {
@@ -188,6 +219,25 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		mOnComponentDraggingCallback = onComponentDraggingCallback;
 	}
 
+	private int getCurrentHeightIndexFromCurrentHeight(int currentHeight) {
+		for(int i = 0; i < mHeights.length; i++) {
+			if(currentHeight == mHeights[i])
+				return i;
+		}
+
+		throw new IllegalArgumentException("fuck");
+	}
+
+	private int roundToNearestSnapHeight(int currentHeight) {
+		int minIndex = 0;
+		for(int i = 1; i < mHeights.length; i++) {
+			if(Math.abs(currentHeight - mHeights[minIndex]) > Math.abs(currentHeight - mHeights[i]))
+				minIndex = i;
+		}
+
+		return minIndex;
+	}
+
 	private class ComponentViewHolder extends RecyclerView.ViewHolder {
 
 		private View mBar;
@@ -240,10 +290,30 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			});
 
+//			mBar.setOnClickListener(new View.OnClickListener() {
+//
+//				int heightIndex = 0;
+//
+//				@Override
+//				public void onClick(View v) {
+//					Print.log("component height", mComponentName.getHeight() + (mActivity.getResources().getDimension(R.dimen.four_dp) * 2));
+//
+//					if(heightIndex >= mHeights.length)
+//						heightIndex = 0;
+//
+//					mBar.getLayoutParams().height = mHeights[heightIndex];
+//					mBar.requestLayout();
+//
+//					heightIndex++;
+//				}
+//
+//			});
+
 			dragArea.setOnTouchListener(new View.OnTouchListener() {
 
 				float initialYTouch;
 				int initialHeight;
+				int initialIndex;
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -251,6 +321,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 						case MotionEvent.ACTION_DOWN:
 							initialYTouch = event.getRawY();
 							initialHeight = mBar.getHeight();
+							initialIndex = getCurrentHeightIndexFromCurrentHeight(initialHeight);
 
 							if(mOnComponentDraggingCallback != null)
 								mOnComponentDraggingCallback.onComponentDragging(true);
@@ -261,8 +332,8 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 							if(touchDy == 0)
 								break;
 
-							int minHeight = (int) (mComponentName.getHeight() + (mActivity.getResources().getDimension(R.dimen.four_dp) * 2));
-							int maxHeight = (mGraphSectionHeight - (mSpacing * 2));
+							int minHeight = mHeights[0];
+							int maxHeight = mHeights[mHeights.length - 1];
 
 							int barHeight = (int) (initialHeight + touchDy);
 
@@ -277,7 +348,44 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 							if(mOnComponentDraggingCallback != null)
 								mOnComponentDraggingCallback.onComponentDragging(false);
 
-							Print.log("action triggered telling us to cancel");
+							int closestIndex = roundToNearestSnapHeight(mBar.getHeight());
+
+							touchDy = initialYTouch - event.getRawY();
+
+							//This second below might not be good, but I think it is
+							if(touchDy < 0 && closestIndex > 0) {
+								if(closestIndex == initialIndex)
+									closestIndex--;
+							}
+							else if(touchDy > 0 && closestIndex < mHeights.length - 1) {
+								if(closestIndex == initialIndex)
+									closestIndex++;
+							}
+
+							mBar.getLayoutParams().height = mHeights[closestIndex];
+							mBar.requestLayout();
+
+							ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
+							component.setIntensity(closestIndex);
+
+//							int currentIndex = getCurrentHeightIndexFromCurrentHeight(mBar.getHeight());
+//							if(touchDy < 0 && currentIndex > 0) {
+//								//Get difference between current height and lowest height
+//								int diff = mBar.getHeight() - mHeights[currentIndex - 1];
+//								if(Math.abs(touchDy) > diff / 2) {
+//									mBar.getLayoutParams().height = mHeights[currentIndex - 1];
+//									mBar.requestLayout();
+//								}
+//							}
+//							else if(touchDy > 0 && currentIndex < mHeights.length - 1) {
+//								//Get diff
+//								int diff = mHeights[currentIndex + 1] - mBar.getHeight();
+//								if(touchDy > diff / 2) {
+//									mBar.getLayoutParams().height = mHeights[currentIndex + 1];
+//									mBar.requestLayout();
+//								}
+//							}
+
 							break;
 					}
 
@@ -306,7 +414,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 			ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
 
 			mComponentName.setText(component.getName());
-			mBar.getLayoutParams().height = (int) ((mGraphSectionHeight - (mSpacing * 2)) * component.getIntensity());
+			mBar.getLayoutParams().height = mHeights[component.getIntensity()];
 			mBar.invalidate();
 		}
 

@@ -3,5 +3,6 @@
 
 	<dimen name="adjust_area_height">96dp</dimen>
 	<dimen name="four_dp">4dp</dimen>
+	<dimen name="class_bar_text_size">20dp</dimen>
 
 </resources>

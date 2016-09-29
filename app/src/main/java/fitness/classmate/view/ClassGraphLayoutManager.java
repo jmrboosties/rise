@@ -22,7 +22,7 @@ public class ClassGraphLayoutManager extends LinearLayoutManager {
 
 	@Override
 	public boolean canScrollHorizontally() {
-		return super.canScrollHorizontally() && mScrollingDisabled;
+		return super.canScrollHorizontally() && !mScrollingDisabled;
 	}
 
 	public void setScrollingDisabled(boolean scrollingDisabled) {
