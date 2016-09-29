@@ -1,8 +1,6 @@
 package fitness.classmate.adapter;
 
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.item.ClassGraphItem;
+import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
 import rx.functions.Action1;
@@ -244,8 +243,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		private TextView mComponentName;
 		private boolean mDragAreaVisible;
 
-		private int mCurrentDy;
-
 		public ComponentViewHolder(View itemView) {
 			super(itemView);
 			mBar = itemView.findViewById(R.id.icgc_bar);
@@ -257,7 +254,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			final int adjustAreaHeight = (int) mActivity.getResources().getDimension(R.dimen.adjust_area_height);
 
-			//Get background
+			//TODO set colors for each intensity level
 			Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.class_component_background);
 			drawable.setColorFilter(ContextCompat.getColor(mActivity, android.R.color.white), PorterDuff.Mode.MULTIPLY);
 
@@ -289,25 +286,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 				}
 
 			});
-
-//			mBar.setOnClickListener(new View.OnClickListener() {
-//
-//				int heightIndex = 0;
-//
-//				@Override
-//				public void onClick(View v) {
-//					Print.log("component height", mComponentName.getHeight() + (mActivity.getResources().getDimension(R.dimen.four_dp) * 2));
-//
-//					if(heightIndex >= mHeights.length)
-//						heightIndex = 0;
-//
-//					mBar.getLayoutParams().height = mHeights[heightIndex];
-//					mBar.requestLayout();
-//
-//					heightIndex++;
-//				}
-//
-//			});
 
 			dragArea.setOnTouchListener(new View.OnTouchListener() {
 
@@ -367,25 +345,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 							ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
 							component.setIntensity(closestIndex);
-
-//							int currentIndex = getCurrentHeightIndexFromCurrentHeight(mBar.getHeight());
-//							if(touchDy < 0 && currentIndex > 0) {
-//								//Get difference between current height and lowest height
-//								int diff = mBar.getHeight() - mHeights[currentIndex - 1];
-//								if(Math.abs(touchDy) > diff / 2) {
-//									mBar.getLayoutParams().height = mHeights[currentIndex - 1];
-//									mBar.requestLayout();
-//								}
-//							}
-//							else if(touchDy > 0 && currentIndex < mHeights.length - 1) {
-//								//Get diff
-//								int diff = mHeights[currentIndex + 1] - mBar.getHeight();
-//								if(touchDy > diff / 2) {
-//									mBar.getLayoutParams().height = mHeights[currentIndex + 1];
-//									mBar.requestLayout();
-//								}
-//							}
-
 							break;
 					}
 

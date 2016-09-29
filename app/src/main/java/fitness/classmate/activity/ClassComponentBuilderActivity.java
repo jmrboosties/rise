@@ -18,13 +18,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import fitness.classmate.R;
 import fitness.classmate.adapter.ClassComponentPoolAdapter;
 import fitness.classmate.adapter.ClassGraphAdapter;
 import fitness.classmate.base.BaseActivity;
+import fitness.classmate.constant.Constants;
 import fitness.classmate.decorator.ComponentDecorator;
+import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
-import fitness.classmate.R;
 import fitness.classmate.view.ClassGraphLayoutManager;
 import rx.Observable;
 import rx.functions.Func2;
@@ -41,9 +43,11 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 	private int mCurrentClassDx;
 
+	private ClassmateClass mClassmateClass;
+
 	@Override
 	protected void prepareActivity() {
-
+		mClassmateClass = getIntent().getParcelableExtra(Constants.CLASSMATE_CLASS);
 	}
 
 	@Override
@@ -69,26 +73,16 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		ClassComponentPoolAdapter classComponentAdapter = new ClassComponentPoolAdapter(this);
 
 		ArrayList<String> components = new ArrayList<>();
+		components.add("Raine");
+		components.add("Finn");
 		components.add("Apple");
 		components.add("Carrot");
+		components.add("Raine");
+		components.add("Finn");
 		components.add("Apple");
 		components.add("Carrot");
-		components.add("Apple");
-		components.add("Carrot");
-		components.add("Apple");
-		components.add("Carrot");
-		components.add("Apple");
-		components.add("Carrot");
-//		components.add("Raine");
-//		components.add("Finn");
-//		components.add("Apple");
-//		components.add("Carrot");
-//		components.add("Raine");
-//		components.add("Finn");
-//		components.add("Apple");
-//		components.add("Carrot");
-//		components.add("Raine");
-//		components.add("Finn");
+		components.add("Raine");
+		components.add("Finn");
 
 		final PublishSubject<Integer> widthCalcSubject = PublishSubject.create();
 
@@ -159,28 +153,32 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 		mClassGraph.setAdapter(mClassGraphAdapter);
 
-		ArrayList<String> componentStrings = new ArrayList<>();
-		componentStrings.add("Apple");
-		componentStrings.add("Carrot");
-		componentStrings.add("Dog");
-		componentStrings.add("EightCha");
-		componentStrings.add("Rats");
-		componentStrings.add("Apple");
-		componentStrings.add("Carrot");
-		componentStrings.add("Dog");
-		componentStrings.add("EightCha");
-		componentStrings.add("Rats");
-		componentStrings.add("Apple");
-		componentStrings.add("Carrot");
-		componentStrings.add("Dog");
-		componentStrings.add("EightCha");
-		componentStrings.add("Rats");
+		if(mClassmateClass != null) {
+			mClassGraphAdapter.setItems(mClassmateClass.getComponents());
+		}
 
-		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
-		for(String s : componentStrings)
-			components.add(buildComponentFromString(s));
-
-		mClassGraphAdapter.setItems(components);
+//		ArrayList<String> componentStrings = new ArrayList<>();
+//		componentStrings.add("Apple");
+//		componentStrings.add("Carrot");
+//		componentStrings.add("Dog");
+//		componentStrings.add("EightCha");
+//		componentStrings.add("Rats");
+//		componentStrings.add("Apple");
+//		componentStrings.add("Carrot");
+//		componentStrings.add("Dog");
+//		componentStrings.add("EightCha");
+//		componentStrings.add("Rats");
+//		componentStrings.add("Apple");
+//		componentStrings.add("Carrot");
+//		componentStrings.add("Dog");
+//		componentStrings.add("EightCha");
+//		componentStrings.add("Rats");
+//
+//		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+//		for(String s : componentStrings)
+//			components.add(buildComponentFromString(s));
+//
+//		mClassGraphAdapter.setItems(components);
 	}
 
 	private void setupDragListener() {

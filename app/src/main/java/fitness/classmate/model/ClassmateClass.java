@@ -6,4 +6,7 @@ public class ClassmateClass {
 
 	private ArrayList<ClassmateClassComponent> mComponents;
 
+	public ArrayList<ClassmateClassComponent> getComponents() {
+		return mComponents;
+	}
 }
