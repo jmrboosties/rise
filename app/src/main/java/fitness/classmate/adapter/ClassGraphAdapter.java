@@ -125,6 +125,11 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 		//Round to find the index we will insert placeholder
 		int insertPlaceholderAt = f > 0 ? (int) Math.ceil(f) : 0;
+
+		boolean hasPlaceholder = getIndexOfPlaceholder() != -1;
+		int maxIndex = mItems.size() - (hasPlaceholder ? 1 : 0);
+		insertPlaceholderAt = Math.min(insertPlaceholderAt, maxIndex);
+
 		insertPlaceholder(insertPlaceholderAt);
 	}
 
@@ -163,7 +168,7 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		}
 	}
 
-	private int getIndexOfPlaceholder() {
+	public int getIndexOfPlaceholder() {
 		for(ClassGraphItem item : mItems) {
 			if(item.getType() == ClassGraphItem.PLACEHOLDER)
 				return mItems.indexOf(item);
@@ -174,6 +179,9 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 	public int getPositionOfPlaceholder(int currentDx) {
 		int indexItWillBeDroppedIn = Math.max(getIndexOfPlaceholder(), 0);
+
+		Print.log("width of a single node", (mComponentWidth + (mSpacing * 2)));
+		Print.log("current dx used", currentDx);
 
 		/*
 		 * Get the x position of the placeholder relative to the screen (as opposed to the full graph view). To do this subtract current dx from
@@ -237,6 +245,18 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 		return minIndex;
 	}
 
+	public ArrayList<ClassmateClassComponent> buildComponents() {
+		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		for(ClassGraphItem item : mItems) {
+			if(item.getType() != ClassGraphItem.COMPONENT)
+				continue;
+
+			components.add(item.getClassComponent());
+		}
+
+		return components;
+	}
+
 	private class ComponentViewHolder extends RecyclerView.ViewHolder {
 
 		private View mBar;
@@ -283,6 +303,15 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 					}
 
 					return false;
+				}
+
+			});
+
+			mBar.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Print.log("adapter/layout pos", getAdapterPosition(), getLayoutPosition());
 				}
 
 			});

@@ -2,13 +2,20 @@ package fitness.classmate.model;
 
 import java.util.ArrayList;
 
+import fitness.classmate.annotation.ColumnName;
+import fitness.classmate.database.Tables;
+
 public class ClassmateClassComponent {
 
+	@ColumnName(Tables.ClassmateClassComponents.NAME)
 	private String mName;
+
 	private ArrayList<ComponentNote> mComponentNotes;
+
 	private ComponentTrack mComponentTrack;
 
 	//Only 1-5
+	@ColumnName(Tables.ClassmateClassComponents.PACE)
 	private int mIntensity = 3;
 
 	public String getName() {

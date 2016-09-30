@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -39,6 +40,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 	private ClassGraphAdapter mClassGraphAdapter;
 
+	private ClassGraphLayoutManager mClassLayoutManager;
 	private ComponentDecorator mComponentDecorator;
 
 	private int mCurrentClassDx;
@@ -66,8 +68,8 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 		mClassGraph = (RecyclerView) findViewById(R.id.accb_class);
 
-		ClassGraphLayoutManager classManager = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-		mClassGraph.setLayoutManager(classManager);
+		mClassLayoutManager = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+		mClassGraph.setLayoutManager(mClassLayoutManager);
 		mClassGraph.addItemDecoration(mComponentDecorator);
 
 		ClassComponentPoolAdapter classComponentAdapter = new ClassComponentPoolAdapter(this);
@@ -230,6 +232,12 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 	private void handleDragLocation(DragEvent event) {
 		int positionInFullGraph = (int) (event.getX() + mCurrentClassDx);
 		mClassGraphAdapter.handleDragEnter(positionInFullGraph);
+
+//		int placeholderPosition = mClassGraphAdapter.getIndexOfPlaceholder();
+//		if(placeholderPosition > mClassLayoutManager.findLastCompletelyVisibleItemPosition()) {
+//			Print.log("scrolling to the placeholder");
+//			mClassLayoutManager.smoothScrollToPosition(mClassGraph, null, placeholderPosition);
+//		}
 	}
 
 	private boolean dropView(final View droppedView, DragEvent dragEvent) {
@@ -316,6 +324,29 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 	@Override
 	protected int getLayoutResId() {
 		return R.layout.activity_class_component_builder;
+	}
+
+	@Override
+	protected int getMenuResId() {
+		return R.menu.class_component_builder;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.ccb_next)
+			buildClassAndGoNext();
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void buildClassAndGoNext() {
+		ArrayList<ClassmateClassComponent> components = mClassGraphAdapter.buildComponents();
+
+		if(mClassmateClass == null) {
+			mClassmateClass = new ClassmateClass();
+		}
+
+		mClassmateClass.setComponents(components);
 	}
 
 }
