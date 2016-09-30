@@ -1,4 +1,4 @@
 package fitness.classmate.net;
 
-public class Spotify {
+public class SpotifyApiHelper {
 }
