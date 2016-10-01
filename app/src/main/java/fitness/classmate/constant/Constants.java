@@ -10,4 +10,6 @@ public class Constants {
 
 	public static final String CLIENT_ID = "4d85fc0699184f09a984618464f93435";
 
+	public static final long DEFAULT_TIMEOUT = 5000L;
+
 }
