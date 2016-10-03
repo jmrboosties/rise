@@ -4,21 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-
 import fitness.classmate.R;
 import fitness.classmate.adapter.ClassComponentPoolAdapter;
 import fitness.classmate.adapter.ClassGraphAdapter;
@@ -32,6 +25,8 @@ import fitness.classmate.view.ClassGraphLayoutManager;
 import rx.Observable;
 import rx.functions.Func2;
 import rx.subjects.PublishSubject;
+
+import java.util.ArrayList;
 
 public class ClassComponentBuilderActivity extends BaseActivity {
 
@@ -347,6 +342,12 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		}
 
 		mClassmateClass.setComponents(components);
+
+		//Go to music
+		Intent intent = new Intent(this, SpotifyPlaylistActivity.class);
+		intent.putExtra(Constants.CLASSMATE_CLASS, mClassmateClass);
+
+		startActivity(intent);
 	}
 
 }

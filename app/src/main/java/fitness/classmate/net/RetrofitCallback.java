@@ -32,8 +32,9 @@ public class RetrofitCallback<T> implements Callback<T> {
 
 	@Override
 	public void onFailure(Call<T> call, Throwable t) {
-		if(mCallback != null)
-			mCallback.onFailure(call, t);
+		//TODO something
+//		if(mCallback != null)
+//			mCallback.onFailure(call, t);
 	}
 
 	public interface UiCallback<T> {
@@ -42,7 +43,7 @@ public class RetrofitCallback<T> implements Callback<T> {
 
 		void onErrorResponse(Call<T> call, Response<T> response);
 
-		void onFailure(Call<T> call, Throwable throwable);
+//		void onFailure(Call<T> call, Throwable throwable);
 
 	}
 

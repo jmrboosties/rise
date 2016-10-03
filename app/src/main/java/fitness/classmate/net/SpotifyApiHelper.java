@@ -3,6 +3,7 @@ package fitness.classmate.net;
 import android.content.Context;
 import fitness.classmate.net.api.SpotifyApi;
 import fitness.classmate.net.gson.GsonFactory;
+import fitness.classmate.net.model.GetSpotifyPlaylistTracksResponse;
 import fitness.classmate.net.model.GetSpotifyPlaylistsResponse;
 import fitness.classmate.net.model.SpotifyMe;
 import fitness.classmate.preferences.Preferences;
@@ -84,6 +85,25 @@ public class SpotifyApiHelper {
 
 	public void getSpotifyPlaylists(RetrofitCallback.UiCallback<GetSpotifyPlaylistsResponse> uiCallback) {
 		Call<GetSpotifyPlaylistsResponse> call = getApi().getPlaylists(mUserId, 50);
+		call.enqueue(new RetrofitCallback<>(uiCallback));
+	}
+
+	public void getSpotifyPlaylists(String url, RetrofitCallback.UiCallback<GetSpotifyPlaylistsResponse> uiCallback) {
+		Call<GetSpotifyPlaylistsResponse> call = getApi().getPlaylists(url);
+		call.enqueue(new RetrofitCallback<>(uiCallback));
+	}
+
+	public void getSpotifyPlaylistTracks(String playlistId, RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse> uiCallback) {
+		getSpotifyPlaylistTracks(playlistId, 0, 100, uiCallback);
+	}
+
+	public void getSpotifyPlaylistTracks(String playlistId, int offset, int limit, RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse> uiCallback) {
+		Call<GetSpotifyPlaylistTracksResponse> call = getApi().getPlaylistTracks(mUserId, playlistId, offset, limit);
+		call.enqueue(new RetrofitCallback<>(uiCallback));
+	}
+
+	public void getSpotifyPlaylistTracksWithUrl(String url, RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse> uiCallback) {
+		Call<GetSpotifyPlaylistTracksResponse> call = getApi().getPlaylistTracks(url);
 		call.enqueue(new RetrofitCallback<>(uiCallback));
 	}
 

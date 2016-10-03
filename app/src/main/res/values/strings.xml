@@ -3,4 +3,6 @@
 
     <string name="next">Next</string>
 
+    <string name="track_count">%d tracks</string>
+
 </resources>

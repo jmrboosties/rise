@@ -11,6 +11,7 @@ import fitness.classmate.net.RetrofitCallback;
 import fitness.classmate.net.SpotifyApiHelper;
 import fitness.classmate.net.model.SpotifyMe;
 import fitness.classmate.preferences.Preferences;
+import fitness.classmate.util.Print;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -19,7 +20,12 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 	private static final String REDIRECT_URI = "spinapptest://callback";
 	private static final int REQUEST_CODE = 1112;
 
-	private void connectToSpotifyIfNecessary() {
+	@Override
+	protected void prepareActivity() {
+		connectToSpotifyIfNecessary();
+	}
+
+	protected void connectToSpotifyIfNecessary() {
 		if(Preferences.getInstance().getSpotifyAccessToken() == null || Preferences.getInstance().getSpotifyUserId() == null) {
 			AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(Constants.CLIENT_ID,
 					AuthenticationResponse.Type.TOKEN,
@@ -47,36 +53,16 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 
 					@Override
 					public void onResponse(SpotifyMe response) {
-
+						Preferences.getInstance().setSpotifyUserId(response.getId());
+						onSpotifyConnected();
 					}
 
 					@Override
 					public void onErrorResponse(Call<SpotifyMe> call, Response<SpotifyMe> response) {
-
-					}
-
-					@Override
-					public void onFailure(Call<SpotifyMe> call, Throwable throwable) {
-
+						Print.log("error on spotify me");
 					}
 
 				});
-
-//				//Get user id
-//				new SpotifyApiHelper(this).getSpotifyMe(new VolleyRequestListener<SpotifyMe>() {
-//
-//					@Override
-//					public void onResponse(SpotifyMe response) {
-//						Preferences.getInstance().setSpotifyUserId(response.getId());
-//						onSpotifyConnected();
-//					}
-//
-//					@Override
-//					public void onErrorResponse(VolleyError error) {
-//						Print.log("error getting spotify me");
-//					}
-//
-//				});
 			}
 		}
 	}

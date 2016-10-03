@@ -1,11 +1,13 @@
 package fitness.classmate.model;
 
-import java.util.ArrayList;
-
+import android.os.Parcel;
+import android.os.Parcelable;
 import fitness.classmate.annotation.ColumnName;
 import fitness.classmate.database.Tables;
 
-public class ClassmateClassComponent {
+import java.util.ArrayList;
+
+public class ClassmateClassComponent implements Parcelable {
 
 	@ColumnName(Tables.ClassmateClassComponents.NAME)
 	private String mName;
@@ -17,6 +19,41 @@ public class ClassmateClassComponent {
 	//Only 1-5
 	@ColumnName(Tables.ClassmateClassComponents.PACE)
 	private int mIntensity = 3;
+
+	public ClassmateClassComponent() { }
+
+	protected ClassmateClassComponent(Parcel in) {
+		mName = in.readString();
+		mComponentNotes = in.createTypedArrayList(ComponentNote.CREATOR);
+		mComponentTrack = in.readParcelable(ComponentTrack.class.getClassLoader());
+		mIntensity = in.readInt();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(mName);
+		dest.writeTypedList(mComponentNotes);
+		dest.writeParcelable(mComponentTrack, flags);
+		dest.writeInt(mIntensity);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	public static final Creator<ClassmateClassComponent> CREATOR = new Creator<ClassmateClassComponent>() {
+
+		@Override
+		public ClassmateClassComponent createFromParcel(Parcel in) {
+			return new ClassmateClassComponent(in);
+		}
+
+		@Override
+		public ClassmateClassComponent[] newArray(int size) {
+			return new ClassmateClassComponent[size];
+		}
+	};
 
 	public String getName() {
 		return mName;

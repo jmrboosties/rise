@@ -1,11 +1,13 @@
 package fitness.classmate.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import fitness.classmate.interfaces.ClassNote;
 
 import java.util.ArrayList;
 
-public class SpotifyPlaylistTrack {
+public class SpotifyPlaylistTrack implements Parcelable {
 
 	private String mName;
 	private String mArtist;
@@ -15,6 +17,43 @@ public class SpotifyPlaylistTrack {
 	private SpotifyAudioFeatures mAudioFeatures;
 
 	private ArrayList<ClassNote> mClassNotes = new ArrayList<>();
+
+	protected SpotifyPlaylistTrack(Parcel in) {
+		mName = in.readString();
+		mArtist = in.readString();
+		mDuration = in.readLong();
+		mUri = in.readString();
+		mImageUrl = in.readString();
+		mAudioFeatures = in.readParcelable(SpotifyAudioFeatures.class.getClassLoader());
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(mName);
+		dest.writeString(mArtist);
+		dest.writeLong(mDuration);
+		dest.writeString(mUri);
+		dest.writeString(mImageUrl);
+		dest.writeParcelable(mAudioFeatures, flags);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	public static final Creator<SpotifyPlaylistTrack> CREATOR = new Creator<SpotifyPlaylistTrack>() {
+
+		@Override
+		public SpotifyPlaylistTrack createFromParcel(Parcel in) {
+			return new SpotifyPlaylistTrack(in);
+		}
+
+		@Override
+		public SpotifyPlaylistTrack[] newArray(int size) {
+			return new SpotifyPlaylistTrack[size];
+		}
+	};
 
 	public String getName() {
 		return mName;
