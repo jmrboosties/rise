@@ -4,6 +4,7 @@ import android.content.Context;
 import fitness.classmate.net.api.SpotifyApi;
 import fitness.classmate.net.gson.GsonFactory;
 import fitness.classmate.net.model.GetSpotifyPlaylistsResponse;
+import fitness.classmate.net.model.SpotifyMe;
 import fitness.classmate.preferences.Preferences;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -74,6 +75,11 @@ public class SpotifyApiHelper {
 
 	private SpotifyApi getApi() {
 		return getSpotifyApiInstance(mAccessToken);
+	}
+
+	public void getSpotifyMe(RetrofitCallback.UiCallback<SpotifyMe> uiCallback) {
+		Call<SpotifyMe> call = getApi().getMe();
+		call.enqueue(new RetrofitCallback<>(uiCallback));
 	}
 
 	public void getSpotifyPlaylists(RetrofitCallback.UiCallback<GetSpotifyPlaylistsResponse> uiCallback) {

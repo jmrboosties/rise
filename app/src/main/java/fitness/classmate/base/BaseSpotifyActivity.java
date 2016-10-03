@@ -7,7 +7,12 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import fitness.classmate.constant.Constants;
+import fitness.classmate.net.RetrofitCallback;
+import fitness.classmate.net.SpotifyApiHelper;
+import fitness.classmate.net.model.SpotifyMe;
 import fitness.classmate.preferences.Preferences;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public abstract class BaseSpotifyActivity extends BaseActivity {
 
@@ -37,6 +42,25 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 			AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
 			if(response.getType() == AuthenticationResponse.Type.TOKEN) {
 				Preferences.getInstance().setSpotifyAccessToken(response.getAccessToken());
+
+				new SpotifyApiHelper(this).getSpotifyMe(new RetrofitCallback.UiCallback<SpotifyMe>() {
+
+					@Override
+					public void onResponse(SpotifyMe response) {
+
+					}
+
+					@Override
+					public void onErrorResponse(Call<SpotifyMe> call, Response<SpotifyMe> response) {
+
+					}
+
+					@Override
+					public void onFailure(Call<SpotifyMe> call, Throwable throwable) {
+
+					}
+
+				});
 
 //				//Get user id
 //				new SpotifyApiHelper(this).getSpotifyMe(new VolleyRequestListener<SpotifyMe>() {
