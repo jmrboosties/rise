@@ -1,6 +1,7 @@
 package fitness.classmate.net;
 
 import android.content.Context;
+import fitness.classmate.model.SpotifyAudioFeatures;
 import fitness.classmate.net.api.SpotifyApi;
 import fitness.classmate.net.gson.GsonFactory;
 import fitness.classmate.net.model.GetSpotifyPlaylistTracksResponse;
@@ -104,6 +105,11 @@ public class SpotifyApiHelper {
 
 	public void getSpotifyPlaylistTracksWithUrl(String url, RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse> uiCallback) {
 		Call<GetSpotifyPlaylistTracksResponse> call = getApi().getPlaylistTracks(url);
+		call.enqueue(new RetrofitCallback<>(uiCallback));
+	}
+
+	public void getTrackAudioFeatures(String trackId, RetrofitCallback.UiCallback<SpotifyAudioFeatures> uiCallback) {
+		Call<SpotifyAudioFeatures> call = getApi().getAudioFeatures(trackId);
 		call.enqueue(new RetrofitCallback<>(uiCallback));
 	}
 

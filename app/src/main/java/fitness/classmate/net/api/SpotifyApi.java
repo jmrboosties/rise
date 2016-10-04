@@ -1,5 +1,6 @@
 package fitness.classmate.net.api;
 
+import fitness.classmate.model.SpotifyAudioFeatures;
 import fitness.classmate.net.model.GetSpotifyPlaylistTracksResponse;
 import fitness.classmate.net.model.GetSpotifyPlaylistsResponse;
 import fitness.classmate.net.model.SpotifyMe;
@@ -36,6 +37,11 @@ public interface SpotifyApi {
 	@GET
 	Call<GetSpotifyPlaylistTracksResponse> getPlaylistTracks(
 			@Url String url
+	);
+
+	@GET("audio_features/{id}")
+	Call<SpotifyAudioFeatures> getAudioFeatures(
+			@Path("id") String id
 	);
 
 }

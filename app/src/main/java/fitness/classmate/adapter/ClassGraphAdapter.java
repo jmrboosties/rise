@@ -21,49 +21,13 @@ import rx.functions.Action1;
 
 import java.util.ArrayList;
 
-public class ClassGraphAdapter extends RecyclerView.Adapter {
+public class ClassGraphAdapter extends AbsGraphAdapter {
 
-	private BaseActivity mActivity;
-	private int mComponentWidth;
-	private int mGraphSectionHeight;
-	private int mSpacing;
 	private ArrayList<ClassGraphItem> mItems = new ArrayList<>();
 	private OnComponentDraggingCallback mOnComponentDraggingCallback;
 
-	private int[] mHeights;
-
 	public ClassGraphAdapter(BaseActivity activity, int spacing, int childWidth, int maxHeight) {
-		mActivity = activity;
-		mSpacing = spacing;
-		mComponentWidth = childWidth;
-		mGraphSectionHeight = maxHeight;
-
-		crunchSnapHeights();
-	}
-
-	private void crunchSnapHeights() {
-		mHeights = new int[5];
-
-		//Max is normal height minus 1/8
-		int maxHeight = mGraphSectionHeight - (mSpacing * 2) - (mGraphSectionHeight / 16);
-
-		//Smallest is just enough to show the text
-		mHeights[0] = maxHeight / 10;
-
-		//Next 1/4
-		mHeights[1] = (int) (maxHeight * .25f);
-
-		//Half
-		mHeights[2] = maxHeight / 2;
-
-		//3/4
-		mHeights[3] = (int) (maxHeight * .75f);
-
-		//Full
-		mHeights[4] = maxHeight;
-
-		for(int i : mHeights)
-			Print.log("height", i);
+		super(activity, spacing, childWidth, maxHeight);
 	}
 
 	public void setItems(@NonNull ArrayList<ClassmateClassComponent> items) {
@@ -99,15 +63,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 
 			notifyItemChanged(placeholderPosition);
 		}
-	}
-
-	/**
-	 * Counts all the items, multiplies them by their width, and adds the spacing from the decorator
-	 *
-	 * @return the full pixel width of the recycler view (will extend off screen in most cases)
-	 */
-	public int getEstimatedFullWidth() {
-		return mItems.size() * (mComponentWidth + (mSpacing * 2));
 	}
 
 	public void handleDragEnter(int positionInFullGraph) {

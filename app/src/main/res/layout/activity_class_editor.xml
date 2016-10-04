@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@android:color/white"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<!--<RelativeLayout-->
+		<!--android:id="@+id/player_section"-->
+		<!--android:layout_width="match_parent"-->
+		<!--android:layout_height="88dp"-->
+		<!--android:layout_alignParentBottom="true"-->
+		<!--android:background="#858aff"-->
+		<!--android:paddingLeft="8dp"-->
+		<!--android:paddingRight="8dp">-->
+
+		<!--<RelativeLayout-->
+			<!--android:id="@+id/seek_container"-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="48dp"-->
+			<!--android:layout_alignParentBottom="true">-->
+
+			<!--<TextView-->
+				<!--android:id="@+id/time_progress"-->
+				<!--android:layout_width="wrap_content"-->
+				<!--android:layout_height="wrap_content"-->
+				<!--android:layout_centerVertical="true"-->
+				<!--tools:text="0:30"/>-->
+
+			<!--<TextView-->
+				<!--android:id="@+id/time_remaining"-->
+				<!--android:layout_width="wrap_content"-->
+				<!--android:layout_height="wrap_content"-->
+				<!--android:layout_alignParentRight="true"-->
+				<!--android:layout_centerVertical="true"-->
+				<!--tools:text="3:54"/>-->
+
+			<!--<SeekBar-->
+				<!--android:id="@+id/progress"-->
+				<!--android:layout_width="match_parent"-->
+				<!--android:layout_height="wrap_content"-->
+				<!--android:layout_centerVertical="true"-->
+				<!--android:layout_toLeftOf="@id/time_remaining"-->
+				<!--android:layout_toRightOf="@id/time_progress"/>-->
+
+		<!--</RelativeLayout>-->
+
+		<!--<ImageView-->
+			<!--android:id="@+id/add"-->
+			<!--android:layout_width="30dp"-->
+			<!--android:layout_height="30dp"-->
+			<!--android:src="@drawable/plus"-->
+			<!--android:layout_marginTop="8dp"-->
+			<!--android:layout_marginBottom="8dp"-->
+			<!--android:layout_above="@id/seek_container"/>-->
+
+		<!--<TextView-->
+			<!--android:id="@+id/player_title"-->
+			<!--android:layout_width="wrap_content"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:layout_alignParentRight="true"-->
+			<!--android:layout_marginBottom="8dp"-->
+			<!--android:layout_above="@id/seek_container"-->
+			<!--tools:text="Track 2: Maneater"/>-->
+
+	<!--</RelativeLayout>-->
+
+	<RelativeLayout
+		android:id="@+id/player_section"
+		android:layout_width="match_parent"
+		android:layout_height="150dp"
+		android:layout_alignParentBottom="true"
+		android:background="#858aff"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		android:paddingTop="4dp"
+		android:paddingBottom="4dp"
+		android:orientation="vertical">
+
+		<com.spinclass.view.PlayerControlsView
+			android:id="@+id/ace_controls_view"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"/>
+
+		<com.spinclass.view.PlayerProgressSectionView
+			android:id="@+id/ace_progress_view"
+			android:layout_width="match_parent"
+			android:layout_height="56dp"
+			android:layout_above="@id/ace_controls_view"/>
+
+		<ImageView
+			android:id="@+id/add"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:src="@drawable/plus"
+			android:layout_marginTop="8dp"
+			android:layout_marginBottom="8dp"
+			android:layout_above="@id/ace_progress_view"/>
+
+		<TextView
+			android:id="@+id/player_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_marginBottom="8dp"
+			android:layout_above="@id/ace_progress_view"
+			tools:text="Track 2: Maneater"/>
+
+	</RelativeLayout>
+
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/tracks_list"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_above="@id/player_section"/>
+
+</RelativeLayout>

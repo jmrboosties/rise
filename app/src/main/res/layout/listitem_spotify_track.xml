@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="96dp"
+	android:padding="8dp"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<ImageView
+		android:id="@+id/lst_image"
+		android:layout_width="match_parent"
+		android:layout_height="96dp"
+		android:alpha="0.5"/>
+
+	<LinearLayout
+		android:id="@+id/lst_left_section"
+		android:layout_width="88dp"
+		android:layout_height="88dp"
+		android:orientation="vertical"
+		android:gravity="center">
+
+		<TextView
+			android:id="@+id/lst_order"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="48dp"
+			android:textColor="#1cb62a"
+			tools:text="2"/>
+
+		<TextView
+			android:id="@+id/lst_duration"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="12dp"
+			tools:text="3:32"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/lst_bpm_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="8dp"
+		android:orientation="vertical"
+		android:layout_centerVertical="true"
+		android:layout_alignParentRight="true"
+		android:gravity="center_horizontal"
+		android:visibility="invisible">
+
+		<TextView
+			android:id="@+id/lst_bpm"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="@android:color/black"
+			android:textSize="20dp"
+			tools:text="120"/>
+
+		<TextView
+			android:id="@+id/lst_bpm_caption"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="@android:color/black"
+			android:textSize="12dp"
+			android:text="@string/bpm"/>
+
+	</LinearLayout>
+
+	<ProgressBar
+		android:id="@+id/progress"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_marginRight="8dp"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"/>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_centerVertical="true"
+		android:layout_toLeftOf="@id/lst_bpm_container"
+		android:layout_toRightOf="@id/lst_left_section"
+		android:layout_marginLeft="8dp">
+
+		<TextView
+			android:id="@+id/lst_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="@android:color/black"
+			android:textSize="18dp"
+			android:maxLines="2"
+			android:ellipsize="end"
+			tools:text="Song title"/>
+
+		<TextView
+			android:id="@+id/lst_subtitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:textColor="@android:color/black"
+			android:textSize="14dp"
+			android:maxLines="1"
+			android:ellipsize="end"
+			tools:text="Artist name"/>
+
+		<TextView
+			android:id="@+id/lst_notes_count"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:textColor="@android:color/black"
+			android:textSize="12dp"
+			tools:text="4 notes" />
+
+	</LinearLayout>
+
+</RelativeLayout>

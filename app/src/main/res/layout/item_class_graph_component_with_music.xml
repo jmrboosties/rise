@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="4">
+
+		<RelativeLayout
+			android:id="@+id/icgcwm_bar"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_gravity="bottom"
+			android:layout_marginBottom="2dp">
+
+			<TextView android:id="@+id/icgc_component_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="@dimen/class_bar_text_size"
+				android:layout_marginTop="@dimen/four_dp"
+				android:layout_marginBottom="@dimen/four_dp"
+				android:layout_alignParentBottom="true"
+				android:layout_centerHorizontal="true"
+				tools:text="Sprint"/>
+
+		</RelativeLayout>
+
+	</FrameLayout>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="#43cca1"
+		android:layout_marginTop="2dp">
+
+		<TextView android:id="@+id/icgcwm_track"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="@dimen/class_bar_text_size"
+			android:layout_marginTop="@dimen/four_dp"
+			android:layout_marginBottom="@dimen/four_dp"
+			android:layout_gravity="center|bottom"
+			tools:text="Music"/>
+
+	</FrameLayout>
+
+</LinearLayout>

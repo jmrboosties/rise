@@ -7,7 +7,7 @@ public class Constants {
 	//Extra keys
 	public static final String CLASSMATE_CLASS = "classmate_class";
 	public static final String SPOTIFY_PLAYLIST = "spotify_playlist";
-
+	public static final String PLAYLIST_TRACKS_URL = "playlist_tracks_url";
 
 	public static final String CLIENT_ID = "4d85fc0699184f09a984618464f93435";
 

@@ -174,28 +174,28 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 			mClassGraphAdapter.setItems(mClassmateClass.getComponents());
 		}
 
-//		ArrayList<String> componentStrings = new ArrayList<>();
-//		componentStrings.add("Apple");
-//		componentStrings.add("Carrot");
-//		componentStrings.add("Dog");
-//		componentStrings.add("EightCha");
-//		componentStrings.add("Rats");
-//		componentStrings.add("Apple");
-//		componentStrings.add("Carrot");
-//		componentStrings.add("Dog");
-//		componentStrings.add("EightCha");
-//		componentStrings.add("Rats");
-//		componentStrings.add("Apple");
-//		componentStrings.add("Carrot");
-//		componentStrings.add("Dog");
-//		componentStrings.add("EightCha");
-//		componentStrings.add("Rats");
-//
-//		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
-//		for(String s : componentStrings)
-//			components.add(buildComponentFromString(s));
-//
-//		mClassGraphAdapter.setItems(components);
+		ArrayList<String> componentStrings = new ArrayList<>();
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+
+		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		for(String s : componentStrings)
+			components.add(buildComponentFromString(s));
+
+		mClassGraphAdapter.setItems(components);
 	}
 
 	private void setupDragListener() {

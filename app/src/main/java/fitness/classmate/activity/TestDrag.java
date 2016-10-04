@@ -4,7 +4,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import com.jakewharton.rxbinding.view.RxView;
 import fitness.classmate.R;
-import fitness.classmate.adapter.ClassPlaylistEditorAdapter;
 import fitness.classmate.adapter.ClassPlaylistEditorGraphAdapter;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.decorator.ComponentDecorator;
@@ -36,7 +35,7 @@ public class TestDrag extends BaseActivity {
 	@Override
 	protected void initLayout() {
 		mGraph = (RecyclerView) findViewById(R.id.acpe_class_graph);
-	    mPlaylist = (RecyclerView) findViewById(R.id.acpe_playlist);
+//	    mPlaylist = (RecyclerView) findViewById(R.id.acpe_playlist);
 
 	    ClassGraphLayoutManager graphManager = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 	    ClassGraphLayoutManager playlistManage = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -172,10 +171,10 @@ public class TestDrag extends BaseActivity {
 		componentStrings.add("EightCha");
 		componentStrings.add("Rats");
 
-		ClassPlaylistEditorAdapter editorAdapter = new ClassPlaylistEditorAdapter(this, barWidth);
-		editorAdapter.setComponents(componentStrings);
-
-		mPlaylist.setAdapter(editorAdapter);
+//		ClassPlaylistEditorAdapter editorAdapter = new ClassPlaylistEditorAdapter(this, barWidth);
+//		editorAdapter.setComponents(componentStrings);
+//
+//		mPlaylist.setAdapter(editorAdapter);
 	}
 
 	@Override
