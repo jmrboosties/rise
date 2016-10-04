@@ -11,18 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.jakewharton.rxbinding.view.RxView;
-
-import java.util.ArrayList;
-
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.item.ClassGraphItem;
-import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
 import rx.functions.Action1;
+
+import java.util.ArrayList;
 
 public class ClassGraphAdapter extends RecyclerView.Adapter {
 
@@ -303,15 +300,6 @@ public class ClassGraphAdapter extends RecyclerView.Adapter {
 					}
 
 					return false;
-				}
-
-			});
-
-			mBar.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Print.log("adapter/layout pos", getAdapterPosition(), getLayoutPosition());
 				}
 
 			});

@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+import fitness.classmate.R;
+import fitness.classmate.base.BaseActivity;
+import fitness.classmate.util.Print;
 
 import java.util.ArrayList;
-
-import fitness.classmate.base.BaseActivity;
-import fitness.classmate.R;
 
 public class ClassComponentPoolAdapter extends RecyclerView.Adapter<ClassComponentPoolAdapter.ComponentViewHolder> {
 
@@ -62,6 +62,8 @@ public class ClassComponentPoolAdapter extends RecyclerView.Adapter<ClassCompone
 				@Override
 				public void onGlobalLayout() {
 					mTextView.setWidth(mTextView.getHeight() * 2);
+
+					Print.log("width of pool component", mTextView.getHeight() * 2);
 
 					if(mWidthCalculatedCallback != null)
 						mWidthCalculatedCallback.onComponentWidthCalculated(mTextView.getHeight() * 2);

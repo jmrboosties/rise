@@ -1,209 +1,186 @@
 package fitness.classmate.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.content.ClipData;
-import android.content.ClipDescription;
-import android.graphics.Point;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
-import android.view.DragEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-
-import java.util.HashMap;
-
-import fitness.classmate.util.Print;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import com.jakewharton.rxbinding.view.RxView;
 import fitness.classmate.R;
+import fitness.classmate.adapter.ClassPlaylistEditorAdapter;
+import fitness.classmate.adapter.ClassPlaylistEditorGraphAdapter;
+import fitness.classmate.base.BaseActivity;
+import fitness.classmate.decorator.ComponentDecorator;
+import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.util.Print;
+import fitness.classmate.view.ClassGraphLayoutManager;
+import rx.Observable;
+import rx.functions.Func2;
 
-public class TestDrag extends AppCompatActivity {
+import java.util.ArrayList;
 
-	private HashMap<String, View> mTagMap = new HashMap<>();
+public class TestDrag extends BaseActivity {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	private RecyclerView mGraph;
+	private RecyclerView mPlaylist;
 
-        setContentView(R.layout.test_drag_drop);
+	private ComponentDecorator mComponentDecorator;
 
-        initLayout();
-    }
-
-    private void initLayout() {
-	    FrameLayout top = (FrameLayout) findViewById(R.id.top);
-	    FrameLayout bottom = (FrameLayout) findViewById(R.id.bottom);
-
-	    top.setTag("top");
-		bottom.setTag("bottom");
-
-	    top.setOnDragListener(new MyDragListener());
-	    bottom.setOnDragListener(new MyDragListener());
-
-        ImageView iv1 = buildImageView();
-        ImageView iv2 = buildImageView();
-
-	    addTag(iv1, "iv1");
-	    addTag(iv2, "iv2");
-
-        iv1.setImageResource(R.drawable.kappa);
-        iv2.setImageResource(R.drawable.pogchamp);
-
-        top.addView(iv1);
-        top.addView(iv2);
-    }
-
-	private void addTag(View view, String tag) {
-		view.setTag(tag);
-		mTagMap.put(tag, view);
+	@Override
+	protected int getMenuResId() {
+		return 0;
 	}
 
-    private ImageView buildImageView() {
-        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
-        int margins = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+	@Override
+	protected void prepareActivity() {
 
-        ImageView iv = new ImageView(this);
+	}
 
-	    iv.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+	@Override
+	protected void initLayout() {
+		mGraph = (RecyclerView) findViewById(R.id.acpe_class_graph);
+	    mPlaylist = (RecyclerView) findViewById(R.id.acpe_playlist);
 
-	    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size);
-        params.setMargins(margins, margins, margins, margins);
+	    ClassGraphLayoutManager graphManager = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+	    ClassGraphLayoutManager playlistManage = new ClassGraphLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
-        iv.setLayoutParams(params);
+		mGraph.setLayoutManager(graphManager);
+		mPlaylist.setLayoutManager(playlistManage);
 
-        iv.setOnLongClickListener(new View.OnLongClickListener() {
+	    mComponentDecorator = new ComponentDecorator(this);
 
-            @Override
-            public boolean onLongClick(View v) {
-	            ClipData.Item item = new ClipData.Item((CharSequence) v.getTag());
-	            ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
+		mGraph.addItemDecoration(mComponentDecorator);
+		mPlaylist.addItemDecoration(mComponentDecorator);
 
-	            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
+		mGraph.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
-	            //Deprecated in 24, leave it for us
-	            //noinspection deprecation
-	            v.startDrag(dragData,  // the data to be dragged
-			            myShadow,  // the drag shadow builder
-			            null,      // no need to use local data
-			            0          // flags (not currently used, set to 0)
-	            );
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
 
-                return true;
-            }
-
-        });
-
-        return iv;
-    }
-
-	private class MyDragListener implements View.OnDragListener {
-
-		@Override
-		public boolean onDrag(View v, DragEvent event) {
-			int action = event.getAction();
-
-			View dragging = null;
-			if(event.getClipDescription() != null)
-				dragging = mTagMap.get(event.getClipDescription().getLabel().toString());
-
-			if(dragging == null) {
-				if(action == DragEvent.ACTION_DRAG_ENDED) {
-					Print.log("drag event ended");
-					return true;
-				}
-			}
-			else {
-				switch(action) {
-					case DragEvent.ACTION_DRAG_STARTED:
-						Print.log("view with tag " + v.getTag() + " ready to receive drop of " + dragging.getTag());
-						break;
-					case DragEvent.ACTION_DRAG_ENTERED:
-						Print.log("view with tag " + dragging.getTag() + " entered " +  v.getTag());
-						break;
-					case DragEvent.ACTION_DRAG_EXITED:
-						Print.log("view with tag " + dragging.getTag() + " exited " +  v.getTag());
-						break;
-					case DragEvent.ACTION_DROP:
-						Print.log("view with tag " + dragging.getTag() + " dropped in " +  v.getTag());
-
-						return dropView((ViewGroup) v, dragging, event);
-					case DragEvent.ACTION_DRAG_LOCATION :
-//						Print.log("location xy", event.getX(), event.getY());
-						break;
-					default:
-						return false;
-				}
+				mPlaylist.scrollBy(dx, dy);
 			}
 
-			return true;
-		}
+		});
+
+		mPlaylist.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+
+				Print.log("might luck out on this one", dx, dy);
+			}
+
+		});
+
+//		mGraph.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//			@Override
+//			public void onGlobalLayout() {
+//				buildGraphAdapter();
+//				mGraph.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//			}
+//		});
+
+	    final Observable graphObservable = RxView.globalLayouts(mGraph);
+		final Observable playlistObservable = RxView.globalLayouts(mPlaylist);
+
+		Observable.zip(graphObservable, playlistObservable, new Func2() {
+
+			@Override
+			public Object call(Object o, Object o2) {
+				Print.log("should only see this once");
+
+				int barWidth = getBarWidth();
+				buildGraphAdapter(barWidth);
+				buildPlaylistAdapter(barWidth);
+
+				return null;
+			}
+
+		}).first().subscribe();
+
+    }
+
+	private int getBarWidth() {
+		final int verticalPadding = mPlaylist.getPaddingTop() + mPlaylist.getPaddingBottom();
+		final int spacing = mComponentDecorator.getSpacing();
+
+		int poolHeight = mPlaylist.getHeight();
+		int minusPaddingAndSpacing = poolHeight - verticalPadding - (spacing * 2);
+
+		Print.log("final value", minusPaddingAndSpacing);
+		return minusPaddingAndSpacing;
+	}
+
+	private void buildGraphAdapter(int barWidth) {
+		ClassPlaylistEditorGraphAdapter graphAdapter = new ClassPlaylistEditorGraphAdapter(TestDrag.this, mGraph.getHeight(), barWidth, mComponentDecorator.getSpacing());
+		mGraph.setAdapter(graphAdapter);
+
+		//TODO fake items
+		ArrayList<String> componentStrings = new ArrayList<>();
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+
+		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		for(String s : componentStrings)
+			components.add(buildComponentFromString(s));
+
+		graphAdapter.setComponents(components);
 
 	}
 
-	private boolean dropView(ViewGroup parent, final View droppedView, DragEvent dragEvent) {
-		//Place
-		if(parent.indexOfChild(droppedView) < 0) {
-			//If index is less than 0 means is not present
-			ViewGroup currentParent = (ViewGroup) droppedView.getParent();
-			currentParent.removeView(droppedView);
+	//TODO remove this
+	private ClassmateClassComponent buildComponentFromString(String s) {
+		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
+		classmateClassComponent.setName(s);
 
-			//Get destination before committing view
-			Point destination = getDestinationInParent(parent);
+		float f = s.length() / 8f;
+		int intensity = Math.round(f * 4);
 
-			parent.addView(droppedView);
+		classmateClassComponent.setIntensity(intensity);
 
-			droppedView.setTranslationX(dragEvent.getX() - (droppedView.getWidth() / 2) - parent.getPaddingLeft());
-			droppedView.setTranslationY(dragEvent.getY() - (droppedView.getHeight() / 2) - parent.getPaddingTop());
-
-			droppedView.setAlpha(.75f);
-
-			AnimatorSet animatorSet = new AnimatorSet();
-			animatorSet.playTogether(
-					ObjectAnimator.ofFloat(droppedView, "translationX", droppedView.getTranslationX(), destination.x),
-					ObjectAnimator.ofFloat(droppedView, "translationY", droppedView.getTranslationY(), destination.y)
-			);
-
-			double distanceToTravel = Math.hypot(droppedView.getTranslationX(), droppedView.getRotationY());
-			animatorSet.setDuration((long) (distanceToTravel));
-
-			animatorSet.addListener(new AnimatorListenerAdapter() {
-
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					droppedView.setAlpha(1f);
-				}
-
-			});
-
-			animatorSet.start();
-			return true;
-		}
-		else {
-			//Already has item, do nothing
-			return false;
-		}
+		return classmateClassComponent;
 	}
 
-	private Point getDestinationInParent(ViewGroup parent) {
-		Point point = new Point();
+	private void buildPlaylistAdapter(int barWidth) {
+		ArrayList<String> componentStrings = new ArrayList<>();
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
+		componentStrings.add("Apple");
+		componentStrings.add("Carrot");
+		componentStrings.add("Dog");
+		componentStrings.add("EightCha");
+		componentStrings.add("Rats");
 
-		if(parent.getChildCount() > 0) {
-			View lastChild = parent.getChildAt(parent.getChildCount() - 1);
-			point.x = lastChild.getRight() + ((FrameLayout.LayoutParams) lastChild.getLayoutParams()).rightMargin;
-			point.y = lastChild.getTop() - ((FrameLayout.LayoutParams) lastChild.getLayoutParams()).topMargin - parent.getPaddingTop();
-		}
-		else {
-			point.x = 0;
-			point.y = 0;
-		}
+		ClassPlaylistEditorAdapter editorAdapter = new ClassPlaylistEditorAdapter(this, barWidth);
+		editorAdapter.setComponents(componentStrings);
 
-		return point;
+		mPlaylist.setAdapter(editorAdapter);
+	}
+
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_class_playlist_editor;
 	}
 
 }

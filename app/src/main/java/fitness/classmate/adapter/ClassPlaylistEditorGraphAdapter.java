@@ -12,37 +12,70 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
+import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.util.Print;
 
 import java.util.ArrayList;
 
-public class ClassPlaylistEditorAdapter extends RecyclerView.Adapter {
+public class ClassPlaylistEditorGraphAdapter extends RecyclerView.Adapter {
 
 	private BaseActivity mActivity;
-//	private int mGraphSectionHeight;
-//	private int mSpacing;
+	private int mGraphSectionHeight;
+	private int mSpacing;
 	private int mBarWidth;
 
-	private ArrayList<String> mComponents = new ArrayList<>();
+	private int[] mHeights;
 
-	public ClassPlaylistEditorAdapter(BaseActivity activity,int barWidth) {
+	private ArrayList<ClassmateClassComponent> mComponents = new ArrayList<>();
+
+	public ClassPlaylistEditorGraphAdapter(BaseActivity activity, int graphSectionHeight, int barWidth, int spacing) {
 		mActivity = activity;
+		mGraphSectionHeight = graphSectionHeight;
+		mSpacing = spacing;
 		mBarWidth = barWidth;
+
+		crunchSnapHeights();
 	}
 
-	public void setComponents(@NonNull ArrayList<String> components) {
+	private void crunchSnapHeights() {
+		mHeights = new int[5];
+
+		//Max is normal height minus 1/8
+		int maxHeight = mGraphSectionHeight - (mSpacing * 2) - (mGraphSectionHeight / 16);
+
+		//Smallest is just enough to show the text
+		mHeights[0] = maxHeight / 10;
+
+		//Next 1/4
+		mHeights[1] = (int) (maxHeight * .25f);
+
+		//Half
+		mHeights[2] = maxHeight / 2;
+
+		//3/4
+		mHeights[3] = (int) (maxHeight * .75f);
+
+		//Full
+		mHeights[4] = maxHeight;
+
+		for(int i : mHeights)
+			Print.log("height", i);
+	}
+
+	public void setComponents(@NonNull ArrayList<ClassmateClassComponent> components) {
 		mComponents = components;
 		notifyDataSetChanged();
 	}
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new ClassPlaylistEditorAdapter.BarViewHolder(LayoutInflater.from(mActivity).inflate(R.layout.item_class_graph_component, parent, false));
+		return new BarViewHolder(LayoutInflater.from(mActivity).inflate(R.layout.item_class_graph_component, parent, false));
 	}
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		if(holder instanceof ClassPlaylistEditorAdapter.BarViewHolder)
-			((ClassPlaylistEditorAdapter.BarViewHolder) holder).buildItem();
+		if(holder instanceof BarViewHolder)
+			((BarViewHolder) holder).buildItem();
 	}
 
 	@Override
@@ -75,11 +108,11 @@ public class ClassPlaylistEditorAdapter extends RecyclerView.Adapter {
 		}
 
 		public void buildItem() {
-			String component = mComponents.get(getAdapterPosition());
+			ClassmateClassComponent component = mComponents.get(getAdapterPosition());
 
-			mComponentName.setText(component);
-//			mBar.getLayoutParams().height = mHeights[component.getIntensity()];
-//			mBar.invalidate();
+			mComponentName.setText(component.getName());
+			mBar.getLayoutParams().height = mHeights[component.getIntensity()];
+			mBar.invalidate();
 		}
 
 	}

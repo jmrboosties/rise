@@ -49,7 +49,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 
 	@Override
 	protected void initLayout() {
-		RecyclerView componentPool = (RecyclerView) findViewById(R.id.accb_components);
+		final RecyclerView componentPool = (RecyclerView) findViewById(R.id.accb_components);
 
 		RecyclerView.LayoutManager componentManager = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
 		componentPool.setLayoutManager(componentManager);
@@ -94,6 +94,26 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		});
 
 		componentPool.setAdapter(classComponentAdapter);
+
+		//Block can calculate width of component
+//		{
+//			final int verticalPadding = componentPool.getPaddingTop() + componentPool.getPaddingBottom();
+//			final int spacing = mComponentDecorator.getSpacing();
+//
+//			componentPool.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//				@Override
+//				public void onGlobalLayout() {
+//					int poolHeight = componentPool.getHeight();
+//					int minusPaddingAndSpacing = poolHeight - verticalPadding - (spacing * 4);
+//
+//					Print.log("final value", minusPaddingAndSpacing);
+//
+//					componentPool.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//				}
+//
+//			});
+//		}
 
 		final PublishSubject<Integer> heightCalcSubject = PublishSubject.create();
 
