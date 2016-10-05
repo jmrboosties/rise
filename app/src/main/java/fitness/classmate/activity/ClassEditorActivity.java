@@ -7,10 +7,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import com.spotify.sdk.android.player.*;
 import fitness.classmate.R;
-import fitness.classmate.adapter.SpotifyTracksAdapter;
+import fitness.classmate.adapter.ClassmateNoteEditorAdapter;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.constant.Constants;
 import fitness.classmate.dialog.NewMoveDialogBuilder;
@@ -38,7 +37,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 	private ClassmateClass mClassmateClass;
 	private SpotifyPlaylist mSpotifyPlaylist;
 
-	private SpotifyTracksAdapter mTracksAdapter;
+	private ClassmateNoteEditorAdapter mAdapter;
 
 	@Override
 	protected int getMenuResId() {
@@ -93,7 +92,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 			@Override
 			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-				mTracksAdapter.swapItems(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+				mAdapter.swapItems(viewHolder.getAdapterPosition(), target.getAdapterPosition());
 				return true;
 			}
 
@@ -105,24 +104,30 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 			@Override
 			public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
 				super.clearView(recyclerView, viewHolder);
-				mTracksAdapter.onSwapComplete();
+				mAdapter.onSwapComplete();
+			}
+
+			@Override
+			public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+				super.onSelectedChanged(viewHolder, actionState);
+				Print.log("on selected changed");
 			}
 
 		});
 
 		itemTouchHelper.attachToRecyclerView(recyclerView);
 
-		mTracksAdapter = new SpotifyTracksAdapter(this);
-		mTracksAdapter.setTrackClickListener(new SpotifyTracksAdapter.OnSpotifyPlaylistTrackClickListener() {
+		mAdapter = new ClassmateNoteEditorAdapter(this);
+//		mTracksAdapter.setTrackClickListener(new SpotifyTracksAdapter.OnSpotifyPlaylistTrackClickListener() {
+//
+//			@Override
+//			public void onSpotifyPlaylistTrackClick(SpotifyPlaylistTrack track) {
+//				mPlayerHelper.playTrack(track);
+//			}
+//
+//		});
 
-			@Override
-			public void onSpotifyPlaylistTrackClick(SpotifyPlaylistTrack track) {
-				mPlayerHelper.playTrack(track);
-			}
-
-		});
-
-		recyclerView.setAdapter(mTracksAdapter);
+		recyclerView.setAdapter(mAdapter);
 
 		downloadPlaylistTracks(mSpotifyPlaylist.getTracksUrl());
 
@@ -168,8 +173,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 			public void onResponse(GetSpotifyPlaylistTracksResponse response) {
 				mSpotifyPlaylist.addTracks(response.getSpotifyTracks());
 
-				//Happens either way
-				getAudioFeaturesForTracks();
+//				getAudioFeaturesForTracks();
 
 				if(response.getNextPageUrl() != null)
 					downloadPlaylistTracks(response.getNextPageUrl());
@@ -211,6 +215,8 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 			component.setComponentTrack(componentTrack);
 		}
 
+		getAudioFeaturesForClassTracks(mClassmateClass);
+
 		loadClassIntoAdapter();
 	}
 
@@ -234,7 +240,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 				move.setTimeStamp(Helpbot.getMillisFromTimestamp(time));
 
 				mPlayerHelper.getCurrentTrack().addClassNote(move);
-				mTracksAdapter.notifyItemChanged(mSpotifyPlaylist.getSpotifyTracks().indexOf(mPlayerHelper.getCurrentTrack()));
+				mAdapter.notifyItemChanged(mSpotifyPlaylist.getSpotifyTracks().indexOf(mPlayerHelper.getCurrentTrack()));
 
 				mPlayerHelper.addClassNote(move, mPlayerHelper.getCurrentTrack());
 
@@ -247,15 +253,17 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		showDialog(builder.build());
 	}
 
-	private void getAudioFeaturesForTracks() {
+	private void getAudioFeaturesForClassTracks(ClassmateClass classmateClass) {
 		SpotifyApiHelper apiHelper = new SpotifyApiHelper(this);
-		for(final SpotifyPlaylistTrack track : mSpotifyPlaylist.getSpotifyTracks()) {
+		for(final ClassmateClassComponent component : classmateClass.getComponents()) {
+			final SpotifyPlaylistTrack track = component.getComponentTrack().getSpotifyPlaylistTrack();
+
 			apiHelper.getTrackAudioFeatures(track.getUri().split(":")[2], new RetrofitCallback.UiCallback<SpotifyAudioFeatures>() {
 
 				@Override
 				public void onResponse(SpotifyAudioFeatures response) {
 					track.setAudioFeatures(response);
-					mTracksAdapter.itemChanged(track);
+					mAdapter.itemChanged(component);
 				}
 
 				@Override
@@ -268,7 +276,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 	}
 
 	private void loadClassIntoAdapter() {
-		mTracksAdapter.setSpotifyTracks();
+		mAdapter.setClassmateClass(mClassmateClass);
 	}
 
 	@Override

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="#e1e1e1"
+	android:minHeight="48dp"
+	android:padding="8dp">
+
+	<ImageView
+		android:id="@+id/lcn_icon"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_marginRight="8dp"
+		android:src="@drawable/pogchamp"/>
+
+	<TextView
+		android:id="@+id/lcn_timestamp"
+		android:layout_width="48dp"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="8dp"
+		android:layout_alignParentRight="true"
+		android:textSize="20dp"
+		android:maxLines="1"
+		android:gravity="right"
+		tools:text=":30"/>
+
+	<TextView
+		android:id="@+id/lcn_description"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/lcn_icon"
+		android:layout_toLeftOf="@id/lcn_timestamp"
+		tools:text="4 beat jumps for 45 seconds"/>
+
+</RelativeLayout>

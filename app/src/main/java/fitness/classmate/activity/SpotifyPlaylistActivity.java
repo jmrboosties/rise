@@ -7,12 +7,12 @@ import fitness.classmate.R;
 import fitness.classmate.adapter.SpotifyPlaylistAdapter;
 import fitness.classmate.base.BaseSpotifyActivity;
 import fitness.classmate.constant.Constants;
-import fitness.classmate.model.*;
+import fitness.classmate.model.ClassmateClass;
+import fitness.classmate.model.SpotifyPlaylist;
 import fitness.classmate.net.RetrofitCallback;
 import fitness.classmate.net.SpotifyApiHelper;
 import fitness.classmate.net.model.GetSpotifyPlaylistsResponse;
 import fitness.classmate.preferences.Preferences;
-import fitness.classmate.util.Print;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -76,7 +76,7 @@ public class SpotifyPlaylistActivity extends BaseSpotifyActivity {
 
 	private void handlePlaylistClick(SpotifyPlaylist playlist) {
 		//Send to next activity
-		Intent intent = new Intent(this, ClassPlaylistEditorActivity.class);
+		Intent intent = new Intent(this, ClassEditorActivity.class);
 		intent.putExtra(Constants.CLASSMATE_CLASS, mClassmateClass);
 		intent.putExtra(Constants.SPOTIFY_PLAYLIST, playlist);
 
@@ -103,7 +103,6 @@ public class SpotifyPlaylistActivity extends BaseSpotifyActivity {
 
 			@Override
 			public void onErrorResponse(Call<GetSpotifyPlaylistsResponse> call, Response<GetSpotifyPlaylistsResponse> response) {
-				Print.log("error fetching playlists");
 				if(response.code() == 401) {
 					Preferences.getInstance().clearSpotifyPrefs();
 					connectToSpotifyIfNecessary();

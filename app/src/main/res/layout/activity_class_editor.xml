@@ -77,13 +77,13 @@
 		android:paddingBottom="4dp"
 		android:orientation="vertical">
 
-		<com.spinclass.view.PlayerControlsView
+		<fitness.classmate.view.PlayerControlsView
 			android:id="@+id/ace_controls_view"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:layout_alignParentBottom="true"/>
 
-		<com.spinclass.view.PlayerProgressSectionView
+		<fitness.classmate.view.PlayerProgressSectionView
 			android:id="@+id/ace_progress_view"
 			android:layout_width="match_parent"
 			android:layout_height="56dp"

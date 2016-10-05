@@ -39,7 +39,7 @@ public interface SpotifyApi {
 			@Url String url
 	);
 
-	@GET("audio_features/{id}")
+	@GET("audio-features/{id}")
 	Call<SpotifyAudioFeatures> getAudioFeatures(
 			@Path("id") String id
 	);

@@ -57,7 +57,7 @@ public class SpotifyTracksAdapter extends RecyclerView.Adapter {
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new TrackViewHolder(LayoutInflater.from(mContext).inflate(R.layout.listitem_spotify_track, parent, false));
+		return new TrackViewHolder(LayoutInflater.from(mContext).inflate(R.layout.listitem_component, parent, false));
 	}
 
 	@Override
@@ -98,9 +98,9 @@ public class SpotifyTracksAdapter extends RecyclerView.Adapter {
 			mNotesCount = (TextView) itemView.findViewById(R.id.lst_notes_count);
 			mOrder = (TextView) itemView.findViewById(R.id.lst_order);
 			mDuration = (TextView) itemView.findViewById(R.id.lst_duration);
-			mBpm = (TextView) itemView.findViewById(R.id.lst_bpm);
+			mBpm = (TextView) itemView.findViewById(R.id.lst_pace);
 			mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);
-			mBpmContainer = itemView.findViewById(R.id.lst_bpm_container);
+			mBpmContainer = itemView.findViewById(R.id.lst_pace_container);
 
 			itemView.setOnClickListener(new View.OnClickListener() {
 

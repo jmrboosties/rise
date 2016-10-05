@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
 import android.widget.*;
-import com.spinclass.R;
-import com.spinclass.util.Print;
+import fitness.classmate.R;
+import fitness.classmate.util.Print;
 
 public class PlayerProgressSectionView extends RelativeLayout {
 

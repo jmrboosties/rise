@@ -7,6 +7,8 @@ public class ComponentNote implements Parcelable {
 
 	private String mMessage;
 
+	public ComponentNote() { }
+
 	protected ComponentNote(Parcel in) {
 		mMessage = in.readString();
 	}

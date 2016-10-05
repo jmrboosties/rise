@@ -5,6 +5,7 @@
 
     <string name="track_count">%d tracks</string>
 	<string name="notes_count">%d notes</string>
+	<string name="bpm_count">%d BPM</string>
 
 	<string name="new_move">New Move</string>
 	<string name="new_fadeout">New Fadeout</string>
@@ -13,5 +14,6 @@
 	<string name="new_move_hint">Describe the move here. Try using a brief name you can catch at a glance!</string>
 
 	<string name="bpm">BPM</string>
+	<string name="pace">Pace</string>
 
 </resources>
