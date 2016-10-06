@@ -16,4 +16,6 @@
 	<string name="bpm">BPM</string>
 	<string name="pace">Pace</string>
 
+	<string name="add_note">Add Note</string>
+
 </resources>

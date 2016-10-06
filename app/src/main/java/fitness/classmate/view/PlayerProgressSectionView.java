@@ -77,6 +77,10 @@ public class PlayerProgressSectionView extends RelativeLayout {
 		iv.setOnClickListener(classNoteClickedListener);
 	}
 
+	public void clearNoteViews() {
+		mNotesSection.removeAllViews();
+	}
+
 	public SeekBar getSeekBar() {
 		return mSeekBar;
 	}

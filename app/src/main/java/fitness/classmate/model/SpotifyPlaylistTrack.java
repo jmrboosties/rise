@@ -2,10 +2,6 @@ package fitness.classmate.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import fitness.classmate.interfaces.ClassNote;
-
-import java.util.ArrayList;
 
 public class SpotifyPlaylistTrack implements Parcelable {
 
@@ -15,8 +11,6 @@ public class SpotifyPlaylistTrack implements Parcelable {
 	private String mUri;
 	private String mImageUrl;
 	private SpotifyAudioFeatures mAudioFeatures;
-
-	private ArrayList<ClassNote> mClassNotes = new ArrayList<>();
 
 	protected SpotifyPlaylistTrack(Parcel in) {
 		mName = in.readString();
@@ -85,21 +79,6 @@ public class SpotifyPlaylistTrack implements Parcelable {
 
 	public void setUri(String uri) {
 		mUri = uri;
-	}
-
-	public ArrayList<ClassNote> getClassNotes() {
-		return mClassNotes;
-	}
-
-	public void addClassNote(ClassNote classNote) {
-		if(mClassNotes == null)
-			mClassNotes = new ArrayList<>();
-
-		mClassNotes.add(classNote);
-	}
-
-	public void setClassNotes(@NonNull ArrayList<ClassNote> classNotes) {
-		mClassNotes = classNotes;
 	}
 
 	public String getImageUrl() {

@@ -13,6 +13,7 @@ import fitness.classmate.net.RetrofitCallback;
 import fitness.classmate.net.SpotifyApiHelper;
 import fitness.classmate.net.model.GetSpotifyPlaylistsResponse;
 import fitness.classmate.preferences.Preferences;
+import fitness.classmate.util.Print;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -104,6 +105,7 @@ public class SpotifyPlaylistActivity extends BaseSpotifyActivity {
 			@Override
 			public void onErrorResponse(Call<GetSpotifyPlaylistsResponse> call, Response<GetSpotifyPlaylistsResponse> response) {
 				if(response.code() == 401) {
+					Print.log("401, going to try reconnecting to spotify");
 					Preferences.getInstance().clearSpotifyPrefs();
 					connectToSpotifyIfNecessary();
 				}

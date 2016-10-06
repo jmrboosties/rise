@@ -1,11 +1,9 @@
 package fitness.classmate.util;
 
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.SeekBar;
 import com.spotify.sdk.android.player.*;
 import com.spotify.sdk.android.player.Error;
-import fitness.classmate.interfaces.ClassNote;
 import fitness.classmate.model.SpotifyPlaylist;
 import fitness.classmate.model.SpotifyPlaylistTrack;
 import fitness.classmate.view.PlayerControlsView;
@@ -126,11 +124,19 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 
 	}
 
+	public void setCurrentTrack(SpotifyPlaylistTrack track) {
+		//If its the same do nothing
+		if(track != mCurrentTrack) {
+			mCurrentTrack = track;
+			pause();
+		}
+	}
+
 	public void playTrack(final SpotifyPlaylistTrack track) {
 		PlaybackState state = mPlayer.getPlaybackState();
 		Metadata metadata = mPlayer.getMetadata();
 
-		if(track.getUri().equals(metadata.currentTrack.uri)) {
+		if(metadata != null && metadata.currentTrack != null && track.getUri().equals(metadata.currentTrack.uri)) {
 			Print.log("track has same uri");
 
 			if(!state.isPlaying) {
@@ -180,11 +186,6 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 //			mPlayerHelperCallback.onPlaybackEvent(eventType, playerState);
 //	}
 
-	private void displayClassNotes() {
-		for(final ClassNote note : mCurrentTrack.getClassNotes())
-			addClassNote(note, mCurrentTrack);
-	}
-
 	private SpotifyPlaylistTrack getTrackFromUri(String uri) {
 		if(mSpotifyPlaylist != null) {
 			for(SpotifyPlaylistTrack track : mSpotifyPlaylist.getSpotifyTracks()) {
@@ -205,7 +206,14 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		PlaybackState state = mPlayer.getPlaybackState();
 		Metadata metadata = mPlayer.getMetadata();
 
-		if(metadata.currentTrack.uri != null) {
+		if(mCurrentTrack == null) {
+			//TODO something?
+			return;
+		}
+
+		if(metadata == null || metadata.currentTrack == null || !mCurrentTrack.getUri().equals(metadata.currentTrack.uri))
+			playTrack(mCurrentTrack);
+		else if(metadata.currentTrack.uri != null) {
 			if(state.isPlaying)
 				pause();
 			else
@@ -247,25 +255,32 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		PlaybackState state = mPlayer.getPlaybackState();
 		Metadata metadata = mPlayer.getMetadata();
 
-		mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
-		mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs);
-
-		mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
-		mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(metadata.currentTrack.durationMs));
-
 		if(mCurrentTrack == null || playerEvent == PlayerEvent.kSpPlaybackNotifyTrackChanged) {
-			mCurrentTrack = getTrackFromUri(metadata.currentTrack.uri);
-			displayClassNotes();
+			setCurrentTrack(getTrackFromUri(metadata.currentTrack.uri));
 		}
 
-		if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
-			Print.log("starting progress handler");
-
-			generateNewPlayerProgressHandler();
-			mPlayerProgressHandler.execute();
-		}
-		else if(playerEvent == PlayerEvent.kSpPlaybackNotifyLostPermission) {
+		if(playerEvent == PlayerEvent.kSpPlaybackNotifyLostPermission) {
 			//TODO toast saying they lost a permission probably due to playing on another device
+			return;
+		}
+		else if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
+			mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
+			mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs);
+
+			mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
+			mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(metadata.currentTrack.durationMs));
+
+//			if(mCurrentTrack == null || playerEvent == PlayerEvent.kSpPlaybackNotifyTrackChanged) {
+//				mCurrentTrack = getTrackFromUri(metadata.currentTrack.uri);
+//				displayClassNotes();
+//			}
+
+//			if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
+				Print.log("starting progress handler");
+
+				generateNewPlayerProgressHandler();
+				mPlayerProgressHandler.execute();
+//			}
 		}
 
 		if(mPlayerHelperCallback != null)
@@ -319,25 +334,26 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 	}
 
 	private void cancelPlayerProgressHandler() {
+		Print.log("got cancelled!");
 		if(mPlayerProgressHandler != null)
 			mPlayerProgressHandler.cancel(true);
 
 		mPlayerProgressHandler = null;
 	}
 
-	public void addClassNote(final ClassNote classNote, SpotifyPlaylistTrack track) {
-		float progressAsPercentage = (float) classNote.getTimestamp() / (float) track.getDuration();
-		Print.log("progress as percentage for classnote", progressAsPercentage);
-
-		mPlayerProgressSectionView.addClassNoteViewToFrameLayout(progressAsPercentage, new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Print.log("class note clicked", classNote.getType() + ": " + classNote.getDescription());
-			}
-
-		});
-	}
+//	public void addClassComponentNote(final ClassNote classNote, SpotifyPlaylistTrack track) {
+//		float progressAsPercentage = (float) classNote.getTimestamp() / (float) track.getDuration();
+//		Print.log("progress as percentage for classnote", progressAsPercentage);
+//
+//		mPlayerProgressSectionView.addClassNoteViewToFrameLayout(progressAsPercentage, new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Print.log("class note clicked", classNote.getType() + ": " + classNote.getDescription());
+//			}
+//
+//		});
+//	}
 
 	public SpotifyPlaylistTrack getCurrentTrack() {
 		return mCurrentTrack;
@@ -384,7 +400,6 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 
 		public Builder setSpotifyTrack(SpotifyPlaylistTrack track) {
 			mPlayerHelper.mCurrentTrack = track;
-			mPlayerHelper.displayClassNotes();
 			return this;
 		}
 

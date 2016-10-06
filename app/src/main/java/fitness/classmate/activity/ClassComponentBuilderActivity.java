@@ -326,6 +326,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		for(int i = 0; i < intensity; i++) {
 			ComponentNote note = new ComponentNote();
 			note.setMessage("Note #" + i + 1);
+			note.setTimestamp((i + 1) * 10000);
 
 			classmateClassComponent.addComponentNote(note);
 		}

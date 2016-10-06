@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
@@ -28,6 +29,10 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	private ArrayList<NoteEditorItem> mItems = new ArrayList<>();
 
 	private HashSet<Integer> mChangedPositions = new HashSet<>();
+
+	private ClassmateClassComponent mSelectedComponent;
+
+	private AdapterClickListener mAdapterClickListener;
 
 	public ClassmateNoteEditorAdapter(BaseActivity activity) {
 		mActivity = activity;
@@ -54,9 +59,8 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 				return new ComponentItemHolder(LayoutInflater.from(mActivity).inflate(R.layout.listitem_component, parent, false));
 			case NoteEditorItem.NOTE :
 				return new NoteItemHolder(LayoutInflater.from(mActivity).inflate(R.layout.listitem_component_note, parent, false));
-//			case NoteEditorItem.ADD_NOTE_BUTTON :
-//
-//				break;
+			case NoteEditorItem.ADD_NOTE_BUTTON :
+				return new AddButtonViewHolder(LayoutInflater.from(mActivity).inflate(R.layout.listitem_create_note, parent, false));
 			default:
 				throw new IllegalArgumentException("view type does not have view holder");
 		}
@@ -84,12 +88,13 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		ArrayList<Integer> toRemoveNotify = new ArrayList<>();
 		ArrayList<NoteEditorItem> toRemove = new ArrayList<>();
 		for(NoteEditorItem item : mItems) {
-			if(item.getType() == NoteEditorItem.NOTE) {
+			if(item.getType() != NoteEditorItem.COMPONENT) {
 				toRemove.add(item);
 				toRemoveNotify.add(mItems.indexOf(item));
 			}
 		}
 
+		mSelectedComponent = null;
 		mItems.removeAll(toRemove);
 
 		for(int i : toRemoveNotify)
@@ -136,6 +141,14 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		return mClassmateClass.getComponents().indexOf(component);
 	}
 
+	public void setAdapterClickListener(AdapterClickListener adapterClickListener) {
+		mAdapterClickListener = adapterClickListener;
+	}
+
+	public ClassmateClassComponent getSelectedComponent() {
+		return mSelectedComponent;
+	}
+
 	private class ComponentItemHolder extends RecyclerView.ViewHolder {
 
 		private TextView mComponent;
@@ -160,7 +173,9 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 				@Override
 				public void onClick(View v) {
 					showNotes(getAdapterPosition());
-					//TODO enable player
+
+					if(mAdapterClickListener != null)
+						mAdapterClickListener.onComponentSelected(mSelectedComponent);
 				}
 
 			});
@@ -188,14 +203,22 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		//Get the selected component
 		ClassmateClassComponent component = mItems.get(position).getComponent();
 
-		//If the next item is a note, just hide notes and do nothing else
-		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
-			//Hide existing notes
-			hideNotes();
+//		//If the next item is a note, just hide notes and do nothing else
+//		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
+//			//Hide existing notes
+//			hideNotes();
+//		}
+
+		if(mSelectedComponent == component) {
+			//If it's the same component do nothing
+			return;
 		}
 		else {
 			//Hide existing notes
 			hideNotes();
+
+			//Set the selected component here, don't do it above because hideNotes clears it
+			mSelectedComponent = component;
 
 			//Get the component based position
 			position = getComponentIndex(component);
@@ -237,6 +260,33 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 			mDescription.setText(mItems.get(getAdapterPosition()).getComponentNote().getMessage());
 			mTimestamp.setText(":30"); //TODO
 		}
+
+	}
+
+	private class AddButtonViewHolder extends RecyclerView.ViewHolder {
+
+		public AddButtonViewHolder(View itemView) {
+			super(itemView);
+
+			Button button = (Button) itemView.findViewById(R.id.lcn_add_note_button);
+			button.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if(mAdapterClickListener != null)
+						mAdapterClickListener.onNewNoteClicked(mSelectedComponent);
+				}
+
+			});
+		}
+
+	}
+
+	public interface AdapterClickListener {
+
+		void onNewNoteClicked(ClassmateClassComponent component);
+
+		void onComponentSelected(ClassmateClassComponent component);
 
 	}
 

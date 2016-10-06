@@ -6,16 +6,19 @@ import android.os.Parcelable;
 public class ComponentNote implements Parcelable {
 
 	private String mMessage;
+	private long mTimestamp;
 
 	public ComponentNote() { }
 
 	protected ComponentNote(Parcel in) {
 		mMessage = in.readString();
+		mTimestamp = in.readLong();
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(mMessage);
+		dest.writeLong(mTimestamp);
 	}
 
 	@Override
@@ -42,5 +45,13 @@ public class ComponentNote implements Parcelable {
 
 	public void setMessage(String message) {
 		mMessage = message;
+	}
+
+	public long getTimestamp() {
+		return mTimestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		mTimestamp = timestamp;
 	}
 }

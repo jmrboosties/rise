@@ -1,10 +1,8 @@
 package fitness.classmate.activity;
 
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import com.spotify.sdk.android.player.*;
@@ -118,14 +116,20 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		itemTouchHelper.attachToRecyclerView(recyclerView);
 
 		mAdapter = new ClassmateNoteEditorAdapter(this);
-//		mTracksAdapter.setTrackClickListener(new SpotifyTracksAdapter.OnSpotifyPlaylistTrackClickListener() {
-//
-//			@Override
-//			public void onSpotifyPlaylistTrackClick(SpotifyPlaylistTrack track) {
-//				mPlayerHelper.playTrack(track);
-//			}
-//
-//		});
+		mAdapter.setAdapterClickListener(new ClassmateNoteEditorAdapter.AdapterClickListener() {
+
+			@Override
+			public void onNewNoteClicked(ClassmateClassComponent component) {
+				openNewMoveDialog();
+			}
+
+			@Override
+			public void onComponentSelected(ClassmateClassComponent component) {
+				mPlayerHelper.setCurrentTrack(component.getComponentTrack().getSpotifyPlaylistTrack());
+				displayComponentNotes();
+			}
+
+		});
 
 		recyclerView.setAdapter(mAdapter);
 
@@ -133,36 +137,61 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 		ImageView newButton = (ImageView) findViewById(R.id.add);
 
-		final PopupMenu popupMenu = new PopupMenu(this, newButton);
-		popupMenu.inflate(R.menu.new_class_note);
+//		final PopupMenu popupMenu = new PopupMenu(this, newButton);
+//		popupMenu.inflate(R.menu.new_class_note);
 
 		newButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Print.log("new button clicked");
-				popupMenu.show();
+				//TODO launch full screen chooser when there are multiple options for types
+				openNewMoveDialog();
 			}
 
 		});
 
-		popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//		popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//
+//			@Override
+//			public boolean onMenuItemClick(MenuItem item) {
+//				mPlayerHelper.pause();
+//
+//				switch(item.getItemId()) {
+//					case R.id.new_move :
+//						openNewMoveDialog();
+//						return true;
+//					case R.id.new_fadeout :
+//
+//						return true;
+//					default :
+//						return false;
+//				}
+//			}
+//		});
+	}
+
+	private void displayComponentNotes() {
+		//Clear any existing notes
+		mPlayerProgressSectionView.clearNoteViews();
+
+		ClassmateClassComponent component = mAdapter.getSelectedComponent();
+		if(component != null) {
+			for(ComponentNote note : component.getComponentNotes())
+				addClassComponentNote(note, component.getComponentTrack().getSpotifyPlaylistTrack());
+		}
+	}
+
+	public void addClassComponentNote(final ComponentNote note, SpotifyPlaylistTrack track) {
+		float progressAsPercentage = (float) note.getTimestamp() / (float) track.getDuration();
+		Print.log("progress as percentage for classnote", progressAsPercentage);
+
+		mPlayerProgressSectionView.addClassNoteViewToFrameLayout(progressAsPercentage, new View.OnClickListener() {
 
 			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				mPlayerHelper.pause();
-
-				switch(item.getItemId()) {
-					case R.id.new_move :
-						openNewMoveDialog();
-						return true;
-					case R.id.new_fadeout :
-
-						return true;
-					default :
-						return false;
-				}
+			public void onClick(View v) {
+				Print.log("class note clicked", note.getMessage());
 			}
+
 		});
 	}
 
@@ -235,14 +264,15 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 			@Override
 			public void onConfirmClicked(String time, String description) {
-				Move move = new Move();
-				move.setDescription(description);
-				move.setTimeStamp(Helpbot.getMillisFromTimestamp(time));
+				ComponentNote note = new ComponentNote();
+				note.setMessage(description);
+				note.setTimestamp(Helpbot.getMillisFromTimestamp(time));
 
-				mPlayerHelper.getCurrentTrack().addClassNote(move);
+				mAdapter.getSelectedComponent().addComponentNote(note);
+
 				mAdapter.notifyItemChanged(mSpotifyPlaylist.getSpotifyTracks().indexOf(mPlayerHelper.getCurrentTrack()));
 
-				mPlayerHelper.addClassNote(move, mPlayerHelper.getCurrentTrack());
+				addClassComponentNote(note, mPlayerHelper.getCurrentTrack());
 
 				//Resume
 				mPlayerHelper.resume(); //TODO issue here?
