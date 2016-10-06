@@ -20,6 +20,7 @@ import fitness.classmate.constant.Constants;
 import fitness.classmate.decorator.ComponentDecorator;
 import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ComponentNote;
 import fitness.classmate.util.Print;
 import fitness.classmate.view.ClassGraphLayoutManager;
 import rx.Observable;
@@ -321,6 +322,13 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		int intensity = Math.round(f * 4);
 
 		classmateClassComponent.setIntensity(intensity);
+
+		for(int i = 0; i < intensity; i++) {
+			ComponentNote note = new ComponentNote();
+			note.setMessage("Note #" + i + 1);
+
+			classmateClassComponent.addComponentNote(note);
+		}
 
 		return classmateClassComponent;
 	}

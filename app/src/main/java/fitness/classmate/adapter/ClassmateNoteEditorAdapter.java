@@ -42,17 +42,6 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 			item.setComponent(component);
 
 			mItems.add(item);
-
-			if(component.getIntensity() == 2) {
-				ComponentNote note = new ComponentNote();
-				note.setMessage("Testing message #1");
-
-				NoteEditorItem noteItem = new NoteEditorItem();
-				noteItem.setType(NoteEditorItem.NOTE);
-				noteItem.setComponentNote(note);
-
-				mItems.add(noteItem);
-			}
 		}
 
 		notifyDataSetChanged();
@@ -140,6 +129,10 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	private int getComponentIndex(int adapterPosition) {
 		ClassmateClassComponent component = mItems.get(adapterPosition).getComponent();
+		return getComponentIndex(component);
+	}
+
+	private int getComponentIndex(ClassmateClassComponent component) {
 		return mClassmateClass.getComponents().indexOf(component);
 	}
 
@@ -166,7 +159,8 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 				@Override
 				public void onClick(View v) {
-
+					showNotes(getAdapterPosition());
+					//TODO enable player
 				}
 
 			});
@@ -188,6 +182,43 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 				mBpm.setVisibility(View.INVISIBLE);
 		}
 
+	}
+
+	private void showNotes(int position) {
+		//Get the selected component
+		ClassmateClassComponent component = mItems.get(position).getComponent();
+
+		//If the next item is a note, just hide notes and do nothing else
+		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
+			//Hide existing notes
+			hideNotes();
+		}
+		else {
+			//Hide existing notes
+			hideNotes();
+
+			//Get the component based position
+			position = getComponentIndex(component);
+
+			ArrayList<NoteEditorItem> notes = new ArrayList<>();
+			for(ComponentNote note : component.getComponentNotes()) {
+				NoteEditorItem item = new NoteEditorItem();
+				item.setType(NoteEditorItem.NOTE);
+				item.setComponentNote(note);
+
+				notes.add(item);
+			}
+
+			mItems.addAll(position + 1, notes);
+
+//			for(int i = position + 1; i < position + 1 + notes.size(); i++) {
+//				notifyItemInserted(i);
+//				Print.log("note inserted, should se this " + notes.size() + " times");
+//			}
+
+			//TODO notify correctly, its a bit tricky
+			notifyDataSetChanged();
+		}
 	}
 
 	private class NoteItemHolder extends RecyclerView.ViewHolder {
