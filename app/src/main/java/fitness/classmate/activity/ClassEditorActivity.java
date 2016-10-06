@@ -270,7 +270,10 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 				mAdapter.getSelectedComponent().addComponentNote(note);
 
-				mAdapter.notifyItemChanged(mSpotifyPlaylist.getSpotifyTracks().indexOf(mPlayerHelper.getCurrentTrack()));
+				mAdapter.reloadNotes();
+
+				//TODO pretty sure below line can go
+//				mAdapter.notifyItemChanged(mSpotifyPlaylist.getSpotifyTracks().indexOf(mPlayerHelper.getCurrentTrack()));
 
 				addClassComponentNote(note, mPlayerHelper.getCurrentTrack());
 

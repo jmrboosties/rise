@@ -199,6 +199,15 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	}
 
+	public void reloadNotes() {
+		for(NoteEditorItem item : mItems) {
+			if(item.getType() == NoteEditorItem.COMPONENT && item.getComponent() == mSelectedComponent) {
+				showNotes(mItems.indexOf(item));
+				return;
+			}
+		}
+	}
+
 	private void showNotes(int position) {
 		//Get the selected component
 		ClassmateClassComponent component = mItems.get(position).getComponent();
@@ -209,11 +218,12 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 //			hideNotes();
 //		}
 
-		if(mSelectedComponent == component) {
-			//If it's the same component do nothing
-			return;
-		}
-		else {
+		//TODO figure this out, we need to find a way to cleanly add notes. its complicated list logic that i dont want to waste time on now
+//		if(mSelectedComponent == component) {
+//			//If it's the same component do nothing
+//			return;
+//		}
+//		else {
 			//Hide existing notes
 			hideNotes();
 
@@ -232,6 +242,11 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 				notes.add(item);
 			}
 
+			//Add the "add new" button
+			NoteEditorItem button = new NoteEditorItem();
+			button.setType(NoteEditorItem.ADD_NOTE_BUTTON);
+			notes.add(button);
+
 			mItems.addAll(position + 1, notes);
 
 //			for(int i = position + 1; i < position + 1 + notes.size(); i++) {
@@ -241,7 +256,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 			//TODO notify correctly, its a bit tricky
 			notifyDataSetChanged();
-		}
+//		}
 	}
 
 	private class NoteItemHolder extends RecyclerView.ViewHolder {

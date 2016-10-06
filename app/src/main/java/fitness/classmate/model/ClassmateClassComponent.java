@@ -7,6 +7,8 @@ import fitness.classmate.annotation.ColumnName;
 import fitness.classmate.database.Tables;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ClassmateClassComponent implements Parcelable {
 
@@ -74,6 +76,14 @@ public class ClassmateClassComponent implements Parcelable {
 
 	public void addComponentNote(@NonNull ComponentNote note) {
 		mComponentNotes.add(note);
+		Collections.sort(mComponentNotes, new Comparator<ComponentNote>() {
+
+			@Override
+			public int compare(ComponentNote o1, ComponentNote o2) {
+				return (int) (o1.getTimestamp() - o2.getTimestamp());
+			}
+
+		});
 	}
 
 	public ComponentTrack getComponentTrack() {
