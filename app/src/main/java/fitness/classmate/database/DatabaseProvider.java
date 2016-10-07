@@ -11,11 +11,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
-import fitness.classmate.model.ClassmateClassComponent;
 import fitness.classmate.util.Print;
 
 public class DatabaseProvider extends ContentProvider {

@@ -11,7 +11,7 @@ import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.item.NoteEditorItem;
 import fitness.classmate.model.ClassmateClass;
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.model.ComponentNote;
 import fitness.classmate.model.SpotifyAudioFeatures;
 import fitness.classmate.util.Helpbot;
@@ -30,7 +30,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	private HashSet<Integer> mChangedPositions = new HashSet<>();
 
-	private ClassmateClassComponent mSelectedComponent;
+	private ClassComponent mSelectedComponent;
 
 	private AdapterClickListener mAdapterClickListener;
 
@@ -41,7 +41,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	public void setClassmateClass(@NonNull ClassmateClass classmateClass) {
 		mClassmateClass = classmateClass;
 
-		for(ClassmateClassComponent component : mClassmateClass.getComponents()) {
+		for(ClassComponent component : mClassmateClass.getComponents()) {
 			NoteEditorItem item = new NoteEditorItem();
 			item.setType(NoteEditorItem.COMPONENT);
 			item.setComponent(component);
@@ -123,7 +123,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		mChangedPositions.clear();
 	}
 
-	public void itemChanged(ClassmateClassComponent component) {
+	public void itemChanged(ClassComponent component) {
 		for(int i = 0; i < mItems.size(); i++) {
 			if(mItems.get(i).getType() == NoteEditorItem.COMPONENT && mItems.get(i).getComponent().equals(component)) {
 				notifyItemChanged(i);
@@ -133,11 +133,11 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	}
 
 	private int getComponentIndex(int adapterPosition) {
-		ClassmateClassComponent component = mItems.get(adapterPosition).getComponent();
+		ClassComponent component = mItems.get(adapterPosition).getComponent();
 		return getComponentIndex(component);
 	}
 
-	private int getComponentIndex(ClassmateClassComponent component) {
+	private int getComponentIndex(ClassComponent component) {
 		return mClassmateClass.getComponents().indexOf(component);
 	}
 
@@ -145,7 +145,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		mAdapterClickListener = adapterClickListener;
 	}
 
-	public ClassmateClassComponent getSelectedComponent() {
+	public ClassComponent getSelectedComponent() {
 		return mSelectedComponent;
 	}
 
@@ -210,7 +210,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	private void showNotes(int position) {
 		//Get the selected component
-		ClassmateClassComponent component = mItems.get(position).getComponent();
+		ClassComponent component = mItems.get(position).getComponent();
 
 //		//If the next item is a note, just hide notes and do nothing else
 //		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
@@ -299,9 +299,9 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	public interface AdapterClickListener {
 
-		void onNewNoteClicked(ClassmateClassComponent component);
+		void onNewNoteClicked(ClassComponent component);
 
-		void onComponentSelected(ClassmateClassComponent component);
+		void onComponentSelected(ClassComponent component);
 
 	}
 

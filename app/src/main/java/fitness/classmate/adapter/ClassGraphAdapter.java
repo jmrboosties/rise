@@ -15,7 +15,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.item.ClassGraphItem;
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.util.Print;
 import rx.functions.Action1;
 
@@ -30,10 +30,10 @@ public class ClassGraphAdapter extends AbsGraphAdapter {
 		super(activity, spacing, childWidth, maxHeight);
 	}
 
-	public void setItems(@NonNull ArrayList<ClassmateClassComponent> items) {
+	public void setItems(@NonNull ArrayList<ClassComponent> items) {
 		mItems.clear();
 
-		for(ClassmateClassComponent component : items) {
+		for(ClassComponent component : items) {
 			ClassGraphItem item = new ClassGraphItem();
 			item.setType(ClassGraphItem.COMPONENT);
 			item.setClassComponent(component);
@@ -44,7 +44,7 @@ public class ClassGraphAdapter extends AbsGraphAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void addItem(@NonNull ClassmateClassComponent component) {
+	public void addItem(@NonNull ClassComponent component) {
 		ClassGraphItem item = new ClassGraphItem();
 		item.setType(ClassGraphItem.COMPONENT);
 		item.setClassComponent(component);
@@ -197,8 +197,8 @@ public class ClassGraphAdapter extends AbsGraphAdapter {
 		return minIndex;
 	}
 
-	public ArrayList<ClassmateClassComponent> buildComponents() {
-		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+	public ArrayList<ClassComponent> buildComponents() {
+		ArrayList<ClassComponent> components = new ArrayList<>();
 		for(ClassGraphItem item : mItems) {
 			if(item.getType() != ClassGraphItem.COMPONENT)
 				continue;
@@ -315,7 +315,7 @@ public class ClassGraphAdapter extends AbsGraphAdapter {
 							mBar.getLayoutParams().height = mHeights[closestIndex];
 							mBar.requestLayout();
 
-							ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
+							ClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
 							component.setIntensity(closestIndex);
 							break;
 					}
@@ -342,7 +342,7 @@ public class ClassGraphAdapter extends AbsGraphAdapter {
 		}
 
 		public void buildItem() {
-			ClassmateClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
+			ClassComponent component = mItems.get(getAdapterPosition()).getClassComponent();
 
 			mComponentName.setText(component.getName());
 			mBar.getLayoutParams().height = mHeights[component.getIntensity()];

@@ -1,10 +1,10 @@
 package fitness.classmate.item;
 
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 
 public class ClassGraphItem {
 
-	private ClassmateClassComponent mClassComponent;
+	private ClassComponent mClassComponent;
 	private int mType;
 
 	public static final int COMPONENT = 0;
@@ -18,11 +18,11 @@ public class ClassGraphItem {
 		mType = type;
 	}
 
-	public ClassmateClassComponent getClassComponent() {
+	public ClassComponent getClassComponent() {
 		return mClassComponent;
 	}
 
-	public void setClassComponent(ClassmateClassComponent classComponent) {
+	public void setClassComponent(ClassComponent classComponent) {
 		mClassComponent = classComponent;
 	}
 }

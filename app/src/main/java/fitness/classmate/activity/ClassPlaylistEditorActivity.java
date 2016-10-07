@@ -89,7 +89,7 @@ public class ClassPlaylistEditorActivity extends BaseSpotifyActivity {
 			SpotifyPlaylistTrack track = playlist.getSpotifyTracks().get(i);
 
 			//Get component
-			ClassmateClassComponent component = mClassmateClass.getComponents().get(i);
+			ClassComponent component = mClassmateClass.getComponents().get(i);
 
 			//Attach
 			ComponentTrack componentTrack = new ComponentTrack();
@@ -183,16 +183,16 @@ public class ClassPlaylistEditorActivity extends BaseSpotifyActivity {
 //	}
 
 	//TODO remove this
-	private ClassmateClassComponent buildComponentFromString(String s) {
-		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
-		classmateClassComponent.setName(s);
+	private ClassComponent buildComponentFromString(String s) {
+		ClassComponent classComponent = new ClassComponent();
+		classComponent.setName(s);
 
 		float f = s.length() / 8f;
 		int intensity = Math.round(f * 4);
 
-		classmateClassComponent.setIntensity(intensity);
+		classComponent.setIntensity(intensity);
 
-		return classmateClassComponent;
+		return classComponent;
 	}
 
 	private void buildPlaylistAdapter() {

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ClassmateClassComponent implements Parcelable {
+public class ClassComponent implements Parcelable {
 
 	@ColumnName(Tables.ClassmateClassComponents.NAME)
 	private String mName;
@@ -23,9 +23,9 @@ public class ClassmateClassComponent implements Parcelable {
 	@ColumnName(Tables.ClassmateClassComponents.PACE)
 	private int mIntensity = 3;
 
-	public ClassmateClassComponent() { }
+	public ClassComponent() { }
 
-	protected ClassmateClassComponent(Parcel in) {
+	protected ClassComponent(Parcel in) {
 		mName = in.readString();
 		mComponentNotes = in.createTypedArrayList(ComponentNote.CREATOR);
 		mComponentTrack = in.readParcelable(ComponentTrack.class.getClassLoader());
@@ -45,16 +45,16 @@ public class ClassmateClassComponent implements Parcelable {
 		return 0;
 	}
 
-	public static final Creator<ClassmateClassComponent> CREATOR = new Creator<ClassmateClassComponent>() {
+	public static final Creator<ClassComponent> CREATOR = new Creator<ClassComponent>() {
 
 		@Override
-		public ClassmateClassComponent createFromParcel(Parcel in) {
-			return new ClassmateClassComponent(in);
+		public ClassComponent createFromParcel(Parcel in) {
+			return new ClassComponent(in);
 		}
 
 		@Override
-		public ClassmateClassComponent[] newArray(int size) {
-			return new ClassmateClassComponent[size];
+		public ClassComponent[] newArray(int size) {
+			return new ClassComponent[size];
 		}
 	};
 
@@ -103,6 +103,10 @@ public class ClassmateClassComponent implements Parcelable {
 			throw new IllegalArgumentException("intensity is 1-5");
 
 		mIntensity = intensity;
+	}
+
+	public long getDuration() {
+		return mComponentTrack.getDuration(); //TODO need to adjust this
 	}
 
 }

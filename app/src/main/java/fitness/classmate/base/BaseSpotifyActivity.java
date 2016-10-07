@@ -45,9 +45,9 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if(requestCode == REQUEST_CODE) {
-			AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-			if(response.getType() == AuthenticationResponse.Type.TOKEN) {
-				Preferences.getInstance().setSpotifyAccessToken(response.getAccessToken());
+			final AuthenticationResponse authResponse = AuthenticationClient.getResponse(resultCode, data);
+			if(authResponse.getType() == AuthenticationResponse.Type.TOKEN) {
+				Preferences.getInstance().setSpotifyAccessToken(authResponse.getAccessToken());
 
 				new SpotifyApiHelper(this).getSpotifyMe(new RetrofitCallback.UiCallback<SpotifyMe>() {
 
@@ -60,6 +60,7 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 					@Override
 					public void onErrorResponse(Call<SpotifyMe> call, Response<SpotifyMe> response) {
 						Print.log("error on spotify me");
+						Print.log("used this for auth", authResponse.getAccessToken());
 					}
 
 				});

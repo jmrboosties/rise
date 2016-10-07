@@ -2,6 +2,7 @@
     <string name="app_name">Classmate</string>
 
     <string name="next">Next</string>
+	<string name="done">Done</string>
 
     <string name="track_count">%d tracks</string>
 	<string name="notes_count">%d notes</string>

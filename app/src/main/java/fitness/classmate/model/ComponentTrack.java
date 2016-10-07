@@ -44,4 +44,9 @@ public class ComponentTrack implements Parcelable {
 		}
 	};
 
+	public long getDuration() {
+		//TODO update
+		return mSpotifyPlaylistTrack.getDuration();
+	}
+
 }

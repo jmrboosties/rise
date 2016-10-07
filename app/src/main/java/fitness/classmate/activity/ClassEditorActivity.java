@@ -3,6 +3,7 @@ package fitness.classmate.activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import com.spotify.sdk.android.player.*;
@@ -36,11 +37,6 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 	private SpotifyPlaylist mSpotifyPlaylist;
 
 	private ClassmateNoteEditorAdapter mAdapter;
-
-	@Override
-	protected int getMenuResId() {
-		return 0;
-	}
 
 	@Override
 	protected void prepareActivity() {
@@ -119,12 +115,12 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		mAdapter.setAdapterClickListener(new ClassmateNoteEditorAdapter.AdapterClickListener() {
 
 			@Override
-			public void onNewNoteClicked(ClassmateClassComponent component) {
+			public void onNewNoteClicked(ClassComponent component) {
 				openNewMoveDialog();
 			}
 
 			@Override
-			public void onComponentSelected(ClassmateClassComponent component) {
+			public void onComponentSelected(ClassComponent component) {
 				mPlayerHelper.setCurrentTrack(component.getComponentTrack().getSpotifyPlaylistTrack());
 				displayComponentNotes();
 			}
@@ -174,7 +170,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		//Clear any existing notes
 		mPlayerProgressSectionView.clearNoteViews();
 
-		ClassmateClassComponent component = mAdapter.getSelectedComponent();
+		ClassComponent component = mAdapter.getSelectedComponent();
 		if(component != null) {
 			for(ComponentNote note : component.getComponentNotes())
 				addClassComponentNote(note, component.getComponentTrack().getSpotifyPlaylistTrack());
@@ -235,7 +231,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 			SpotifyPlaylistTrack track = playlist.getSpotifyTracks().get(i);
 
 			//Get component
-			ClassmateClassComponent component = mClassmateClass.getComponents().get(i);
+			ClassComponent component = mClassmateClass.getComponents().get(i);
 
 			//Attach
 			ComponentTrack componentTrack = new ComponentTrack();
@@ -288,7 +284,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 	private void getAudioFeaturesForClassTracks(ClassmateClass classmateClass) {
 		SpotifyApiHelper apiHelper = new SpotifyApiHelper(this);
-		for(final ClassmateClassComponent component : classmateClass.getComponents()) {
+		for(final ClassComponent component : classmateClass.getComponents()) {
 			final SpotifyPlaylistTrack track = component.getComponentTrack().getSpotifyPlaylistTrack();
 
 			apiHelper.getTrackAudioFeatures(track.getUri().split(":")[2], new RetrofitCallback.UiCallback<SpotifyAudioFeatures>() {
@@ -310,6 +306,24 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 	private void loadClassIntoAdapter() {
 		mAdapter.setClassmateClass(mClassmateClass);
+	}
+
+
+	@Override
+	protected int getMenuResId() {
+		return R.menu.menu_done;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.ccb_done)
+			onDone();
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void onDone() {
+
 	}
 
 	@Override

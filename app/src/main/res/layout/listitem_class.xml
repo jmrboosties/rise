@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="8dp"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<TextView
+		android:id="@+id/lc_time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_alignParentRight="true"
+		tools:text="45:00"/>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_alignParentLeft="true"
+		android:layout_toLeftOf="@id/lc_time"
+		android:gravity="center_vertical"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@+id/lc_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="20dp"
+			tools:text="Class title"/>
+
+		<TextView
+			android:id="@+id/lc_author"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="16dp"
+			tools:text="by: Brett Ridgway"/>
+
+		<TextView
+			android:id="@+id/lc_created_at"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="14dp"
+			tools:text="Created: 10/12/16"/>
+
+	</LinearLayout>
+
+</RelativeLayout>

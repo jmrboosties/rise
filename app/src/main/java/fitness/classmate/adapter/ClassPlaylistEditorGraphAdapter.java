@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.util.Print;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class ClassPlaylistEditorGraphAdapter extends RecyclerView.Adapter {
 
 	private int[] mHeights;
 
-	private ArrayList<ClassmateClassComponent> mComponents = new ArrayList<>();
+	private ArrayList<ClassComponent> mComponents = new ArrayList<>();
 
 	public ClassPlaylistEditorGraphAdapter(BaseActivity activity, int graphSectionHeight, int barWidth, int spacing) {
 		mActivity = activity;
@@ -62,7 +62,7 @@ public class ClassPlaylistEditorGraphAdapter extends RecyclerView.Adapter {
 			Print.log("height", i);
 	}
 
-	public void setComponents(@NonNull ArrayList<ClassmateClassComponent> components) {
+	public void setComponents(@NonNull ArrayList<ClassComponent> components) {
 		mComponents = components;
 		notifyDataSetChanged();
 	}
@@ -108,7 +108,7 @@ public class ClassPlaylistEditorGraphAdapter extends RecyclerView.Adapter {
 		}
 
 		public void buildItem() {
-			ClassmateClassComponent component = mComponents.get(getAdapterPosition());
+			ClassComponent component = mComponents.get(getAdapterPosition());
 
 			mComponentName.setText(component.getName());
 			mBar.getLayoutParams().height = mHeights[component.getIntensity()];

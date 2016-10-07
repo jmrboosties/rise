@@ -7,7 +7,7 @@ import fitness.classmate.R;
 import fitness.classmate.adapter.ClassPlaylistEditorGraphAdapter;
 import fitness.classmate.base.BaseActivity;
 import fitness.classmate.decorator.ComponentDecorator;
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.util.Print;
 import fitness.classmate.view.ClassGraphLayoutManager;
 import rx.Observable;
@@ -132,7 +132,7 @@ public class TestDrag extends BaseActivity {
 		componentStrings.add("EightCha");
 		componentStrings.add("Rats");
 
-		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		ArrayList<ClassComponent> components = new ArrayList<>();
 		for(String s : componentStrings)
 			components.add(buildComponentFromString(s));
 
@@ -141,16 +141,16 @@ public class TestDrag extends BaseActivity {
 	}
 
 	//TODO remove this
-	private ClassmateClassComponent buildComponentFromString(String s) {
-		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
-		classmateClassComponent.setName(s);
+	private ClassComponent buildComponentFromString(String s) {
+		ClassComponent classComponent = new ClassComponent();
+		classComponent.setName(s);
 
 		float f = s.length() / 8f;
 		int intensity = Math.round(f * 4);
 
-		classmateClassComponent.setIntensity(intensity);
+		classComponent.setIntensity(intensity);
 
-		return classmateClassComponent;
+		return classComponent;
 	}
 
 	private void buildPlaylistAdapter(int barWidth) {

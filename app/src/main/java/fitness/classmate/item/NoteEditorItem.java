@@ -1,6 +1,6 @@
 package fitness.classmate.item;
 
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.model.ComponentNote;
 
 public class NoteEditorItem {
@@ -10,7 +10,7 @@ public class NoteEditorItem {
 	public static final int ADD_NOTE_BUTTON = 2;
 
 	private int mType;
-	private ClassmateClassComponent mComponent;
+	private ClassComponent mComponent;
 	private ComponentNote mComponentNote;
 
 	public int getType() {
@@ -21,11 +21,11 @@ public class NoteEditorItem {
 		mType = type;
 	}
 
-	public ClassmateClassComponent getComponent() {
+	public ClassComponent getComponent() {
 		return mComponent;
 	}
 
-	public void setComponent(ClassmateClassComponent component) {
+	public void setComponent(ClassComponent component) {
 		mComponent = component;
 	}
 

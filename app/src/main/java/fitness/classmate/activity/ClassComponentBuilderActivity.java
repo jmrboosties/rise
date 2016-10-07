@@ -19,7 +19,7 @@ import fitness.classmate.base.BaseActivity;
 import fitness.classmate.constant.Constants;
 import fitness.classmate.decorator.ComponentDecorator;
 import fitness.classmate.model.ClassmateClass;
-import fitness.classmate.model.ClassmateClassComponent;
+import fitness.classmate.model.ClassComponent;
 import fitness.classmate.model.ComponentNote;
 import fitness.classmate.util.Print;
 import fitness.classmate.view.ClassGraphLayoutManager;
@@ -192,7 +192,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 		componentStrings.add("EightCha");
 		componentStrings.add("Rats");
 
-		ArrayList<ClassmateClassComponent> components = new ArrayList<>();
+		ArrayList<ClassComponent> components = new ArrayList<>();
 		for(String s : componentStrings)
 			components.add(buildComponentFromString(s));
 
@@ -314,24 +314,24 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 	}
 
 	//TODO remove this
-	private ClassmateClassComponent buildComponentFromString(String s) {
-		ClassmateClassComponent classmateClassComponent = new ClassmateClassComponent();
-		classmateClassComponent.setName(s);
+	private ClassComponent buildComponentFromString(String s) {
+		ClassComponent classComponent = new ClassComponent();
+		classComponent.setName(s);
 
 		float f = s.length() / 8f;
 		int intensity = Math.round(f * 4);
 
-		classmateClassComponent.setIntensity(intensity);
+		classComponent.setIntensity(intensity);
 
 		for(int i = 0; i < intensity; i++) {
 			ComponentNote note = new ComponentNote();
 			note.setMessage("Note #" + i + 1);
 			note.setTimestamp((i + 1) * 10000);
 
-			classmateClassComponent.addComponentNote(note);
+			classComponent.addComponentNote(note);
 		}
 
-		return classmateClassComponent;
+		return classComponent;
 	}
 
 	private Point getDestinationInParent(int draggingShadowHeight) {
@@ -364,7 +364,7 @@ public class ClassComponentBuilderActivity extends BaseActivity {
 	}
 
 	private void buildClassAndGoNext() {
-		ArrayList<ClassmateClassComponent> components = mClassGraphAdapter.buildComponents();
+		ArrayList<ClassComponent> components = mClassGraphAdapter.buildComponents();
 
 		if(mClassmateClass == null) {
 			mClassmateClass = new ClassmateClass();
