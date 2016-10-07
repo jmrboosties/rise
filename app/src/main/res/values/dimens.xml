@@ -11,4 +11,7 @@
 	<dimen name="class_note_icon_size">24dp</dimen>
 	<dimen name="class_title_padding">12dp</dimen>
 
+	<dimen name="list_item_padding">8dp</dimen>
+	<dimen name="list_item_elevation">2dp</dimen>
+
 </resources>

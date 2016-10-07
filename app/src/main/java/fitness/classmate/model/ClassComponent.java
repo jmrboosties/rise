@@ -108,5 +108,5 @@ public class ClassComponent implements Parcelable {
 	public long getDuration() {
 		return mComponentTrack.getDuration(); //TODO need to adjust this
 	}
-
+	
 }

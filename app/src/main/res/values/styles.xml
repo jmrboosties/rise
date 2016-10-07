@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -6,6 +6,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="ListItem">
+        <item name="android:background">@drawable/clickable_listitem</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">@dimen/list_item_padding</item>
+        <item name="android:elevation" tools:ignore="NewApi">@dimen/list_item_elevation</item>
     </style>
 
 </resources>

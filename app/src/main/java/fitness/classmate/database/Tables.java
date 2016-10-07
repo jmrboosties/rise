@@ -14,7 +14,8 @@ public class Tables {
 		public static final String TABLE_NAME = "classmate_classes";
 
 		//uri and MIME type
-		public static final Uri CONTENT_URI = Uri.parse("content://" + DatabaseProvider.AUTHORITY + "/" + TABLE_NAME);
+		public static final String URI_STRING = "content://" + DatabaseProvider.AUTHORITY + "/" + TABLE_NAME;
+		public static final Uri CONTENT_URI = Uri.parse(URI_STRING);
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.BIT." + TABLE_NAME;
 
 		public static final String ID = "id";

@@ -3,14 +3,19 @@ package fitness.classmate.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import fitness.classmate.database.DatabaseObject;
 import fitness.classmate.util.Helpbot;
 
 import java.util.ArrayList;
 
-public class ClassmateClass implements Parcelable {
+public class ClassmateClass implements Parcelable, DatabaseObject {
+
+	private int mId;
 
 	private String mTitle;
+
 	private String mAuthor;
+
 	private String mCreatedAt;
 
 	private ArrayList<ClassComponent> mComponents = new ArrayList<>();
@@ -85,4 +90,11 @@ public class ClassmateClass implements Parcelable {
 		return Helpbot.getDurationTimestampFromMillis(time);
 	}
 
+	public int getId() {
+		return mId;
+	}
+
+	public void setId(int id) {
+		mId = id;
+	}
 }

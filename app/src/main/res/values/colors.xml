@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="activity_background">#e1e1e1</color>
+    <color name="listitem_border_color">#cacaca</color>
+	<color name="click_color">#469bc9</color>
+	<color name="ripple">#5981c1</color>
 </resources>
