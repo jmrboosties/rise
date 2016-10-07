@@ -1,6 +1,8 @@
 package fitness.classmate;
 
 import android.app.Application;
+import com.raizlabs.android.dbflow.config.FlowConfig;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import fitness.classmate.preferences.Preferences;
 
 public class ClassmateApplication extends Application {
@@ -10,6 +12,8 @@ public class ClassmateApplication extends Application {
 		super.onCreate();
 
 		Preferences.initialize(this);
+
+		FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
 	}
 
 }

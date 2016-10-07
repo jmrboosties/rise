@@ -3,17 +3,23 @@ package fitness.classmate.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import fitness.classmate.database.DatabaseObject;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+import fitness.classmate.database.Tables;
 import fitness.classmate.util.Helpbot;
 
 import java.util.ArrayList;
 
-public class ClassmateClass implements Parcelable, DatabaseObject {
+public class ClassmateClass extends BaseModel implements Parcelable {
 
+	@PrimaryKey(autoincrement = true)
 	private int mId;
 
+	@Column(Tables.ClassmateClasses.TITLE)
 	private String mTitle;
 
+	@Column
 	private String mAuthor;
 
 	private String mCreatedAt;
