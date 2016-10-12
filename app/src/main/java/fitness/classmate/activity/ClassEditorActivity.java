@@ -77,39 +77,42 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-		final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+//		final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+//
+//			@Override
+//			public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+//				if(viewHolder instanceof ClassmateNoteEditorAdapter.ComponentItemHolder)
+//					return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
+//				else
+//					return 0;
+//			}
+//
+//			@Override
+//			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//				mAdapter.swapItems(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+//				return true;
+//			}
+//
+//			@Override
+//			public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//
+//			}
+//
+//			@Override
+//			public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+//				super.clearView(recyclerView, viewHolder);
+//				mAdapter.onSwapComplete();
+//			}
+//
+//			@Override
+//			public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+//				super.onSelectedChanged(viewHolder, actionState);
+//				Print.log("on selected changed");
+//			}
+//
+//		});
 
-			@Override
-			public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-				return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
-			}
-
-			@Override
-			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-				mAdapter.swapItems(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-				return true;
-			}
-
-			@Override
-			public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-			}
-
-			@Override
-			public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-				super.clearView(recyclerView, viewHolder);
-				mAdapter.onSwapComplete();
-			}
-
-			@Override
-			public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-				super.onSelectedChanged(viewHolder, actionState);
-				Print.log("on selected changed");
-			}
-
-		});
-
-		itemTouchHelper.attachToRecyclerView(recyclerView);
+//		itemTouchHelper.attachToRecyclerView(recyclerView);
 
 		mAdapter = new ClassmateNoteEditorAdapter(this);
 		mAdapter.setAdapterClickListener(new ClassmateNoteEditorAdapter.AdapterClickListener() {

@@ -26,4 +26,21 @@ public class Helpbot {
 		return TimeUnit.MINUTES.toMillis(minutes) + TimeUnit.SECONDS.toMillis(seconds);
 	}
 
+	/**
+	 * If both objects are null, considers them to be equal
+	 *
+	 * @param obj1
+	 * @param obj2
+	 * @return
+	 */
+	@SuppressWarnings("SimplifiableIfStatement")
+	public static boolean equalsWithNull(Object obj1, Object obj2) {
+		if(obj1 == null && obj2 == null)
+			return true;
+		else if(obj1 != null && obj2 != null)
+			return obj1.equals(obj2);
+		else
+			return false;
+	}
+
 }

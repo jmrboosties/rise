@@ -1,6 +1,7 @@
 package fitness.classmate.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import fitness.classmate.R;
 import fitness.classmate.base.BaseActivity;
+import fitness.classmate.diff.NoteEditorDiffUtil;
 import fitness.classmate.item.NoteEditorItem;
 import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.ClassComponent;
@@ -20,12 +22,16 @@ import fitness.classmate.util.Print;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 	private BaseActivity mActivity;
+
+	//The class which is the bible for this adapter
 	private ClassmateClass mClassmateClass;
 
+	//The currently visible views
 	private ArrayList<NoteEditorItem> mItems = new ArrayList<>();
 
 	private HashSet<Integer> mChangedPositions = new HashSet<>();
@@ -41,15 +47,20 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	public void setClassmateClass(@NonNull ClassmateClass classmateClass) {
 		mClassmateClass = classmateClass;
 
-		for(ClassComponent component : mClassmateClass.getComponents()) {
-			NoteEditorItem item = new NoteEditorItem();
-			item.setType(NoteEditorItem.COMPONENT);
-			item.setComponent(component);
+		mSelectedComponent = mClassmateClass.getComponents().get(0);
+		if(mAdapterClickListener != null)
+			mAdapterClickListener.onComponentSelected(mSelectedComponent);
 
-			mItems.add(item);
-		}
+		ArrayList<NoteEditorItem> items = buildComponentsOnly();
+		ArrayList<NoteEditorItem> notesToAdd = getNotesForSelectedComponent();
+		items.addAll(1, notesToAdd);
 
-		notifyDataSetChanged();
+		DiffUtil.DiffResult result = DiffUtil.calculateDiff(new NoteEditorDiffUtil(mItems, items));
+		mItems = items;
+
+		result.dispatchUpdatesTo(this);
+
+//		notifyDataSetChanged();
 	}
 
 	@Override
@@ -75,6 +86,11 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	}
 
 	@Override
+	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
+		super.onBindViewHolder(holder, position, payloads);
+	}
+
+	@Override
 	public int getItemViewType(int position) {
 		return mItems.get(position).getType();
 	}
@@ -84,43 +100,86 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		return mItems.size();
 	}
 
-	private void hideNotes() {
-		ArrayList<Integer> toRemoveNotify = new ArrayList<>();
-		ArrayList<NoteEditorItem> toRemove = new ArrayList<>();
-		for(NoteEditorItem item : mItems) {
-			if(item.getType() != NoteEditorItem.COMPONENT) {
-				toRemove.add(item);
-				toRemoveNotify.add(mItems.indexOf(item));
-			}
+	private ArrayList<NoteEditorItem> buildComponentsOnly() {
+		ArrayList<NoteEditorItem> items = new ArrayList<>();
+
+		for(ClassComponent component : mClassmateClass.getComponents()) {
+			NoteEditorItem item = new NoteEditorItem();
+			item.setType(NoteEditorItem.COMPONENT);
+			item.setComponent(component);
+
+			items.add(item);
 		}
 
-		mSelectedComponent = null;
-		mItems.removeAll(toRemove);
+		return items;
+	}
 
-		for(int i : toRemoveNotify)
-			notifyItemRemoved(i);
+	private ArrayList<NoteEditorItem> getNotesForSelectedComponent() {
+		ArrayList<NoteEditorItem> notesToAdd = new ArrayList<>();
+		for(ComponentNote note : mSelectedComponent.getComponentNotes()) {
+			NoteEditorItem item = new NoteEditorItem();
+			item.setType(NoteEditorItem.NOTE);
+			item.setComponentNote(note);
+
+			notesToAdd.add(item);
+		}
+
+		NoteEditorItem button = new NoteEditorItem();
+		button.setType(NoteEditorItem.ADD_NOTE_BUTTON);
+
+		notesToAdd.add(button);
+
+		return notesToAdd;
+	}
+
+	private void hideNotes() {
+		ArrayList<NoteEditorItem> items = buildComponentsOnly();
+
+		DiffUtil.DiffResult result = DiffUtil.calculateDiff(new NoteEditorDiffUtil(mItems, items), true);
+
+		mItems = items;
+
+		result.dispatchUpdatesTo(this);
+
+//		ArrayList<Integer> toRemoveNotify = new ArrayList<>();
+//		ArrayList<NoteEditorItem> toRemove = new ArrayList<>();
+//		for(NoteEditorItem item : mItems) {
+//			if(item.getType() != NoteEditorItem.COMPONENT) {
+//				toRemove.add(item);
+//				toRemoveNotify.add(mItems.indexOf(item));
+//			}
+//		}
+//
+//		mSelectedComponent = null;
+//		mItems.removeAll(toRemove);
+//
+//		for(int i : toRemoveNotify)
+//			notifyItemRemoved(i);
 	}
 
 	public void swapItems(int fromPosition, int toPosition) {
-		Print.log("swapping positions", fromPosition, toPosition);
-		hideNotes();
 
-		Collections.swap(mItems, fromPosition, toPosition);
 
-		//Swap the class as well
-		Collections.swap(mClassmateClass.getComponents(), getComponentIndex(fromPosition), getComponentIndex(toPosition));
 
-		notifyItemMoved(fromPosition, toPosition);
-
-		mChangedPositions.add(fromPosition);
-		mChangedPositions.add(toPosition);
+//		Print.log("swapping positions", fromPosition, toPosition);
+//		hideNotes();
+//
+//		Collections.swap(mItems, fromPosition, toPosition);
+//
+//		//Swap the class as well
+//		Collections.swap(mClassmateClass.getComponents(), getComponentIndex(fromPosition), getComponentIndex(toPosition));
+//
+//		notifyItemMoved(fromPosition, toPosition);
+//
+//		mChangedPositions.add(fromPosition);
+//		mChangedPositions.add(toPosition);
 	}
 
 	public void onSwapComplete() {
-		for(Integer i : mChangedPositions)
-			notifyItemChanged(i);
-
-		mChangedPositions.clear();
+//		for(Integer i : mChangedPositions)
+//			notifyItemChanged(i);
+//
+//		mChangedPositions.clear();
 	}
 
 	public void itemChanged(ClassComponent component) {
@@ -172,7 +231,7 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 
 				@Override
 				public void onClick(View v) {
-					showNotes(getAdapterPosition());
+					onNotesClicked(getAdapterPosition());
 
 					if(mAdapterClickListener != null)
 						mAdapterClickListener.onComponentSelected(mSelectedComponent);
@@ -202,61 +261,78 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 	public void reloadNotes() {
 		for(NoteEditorItem item : mItems) {
 			if(item.getType() == NoteEditorItem.COMPONENT && item.getComponent() == mSelectedComponent) {
-				showNotes(mItems.indexOf(item));
+				onNotesClicked(mItems.indexOf(item)); //TODO inaccurate
 				return;
 			}
 		}
 	}
 
-	private void showNotes(int position) {
+	private void onNotesClicked(int position) {
 		//Get the selected component
 		ClassComponent component = mItems.get(position).getComponent();
+		int positionInComponentList = getComponentIndex(component);
 
-//		//If the next item is a note, just hide notes and do nothing else
-//		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
-//			//Hide existing notes
-//			hideNotes();
-//		}
-
-		//TODO figure this out, we need to find a way to cleanly add notes. its complicated list logic that i dont want to waste time on now
-//		if(mSelectedComponent == component) {
-//			//If it's the same component do nothing
-//			return;
-//		}
-//		else {
-			//Hide existing notes
-			hideNotes();
-
-			//Set the selected component here, don't do it above because hideNotes clears it
+		if(mSelectedComponent != component) {
+			//This block will hide the old notes automatically
 			mSelectedComponent = component;
 
-			//Get the component based position
-			position = getComponentIndex(component);
+			ArrayList<NoteEditorItem> items = buildComponentsOnly();
+			ArrayList<NoteEditorItem> notesToAdd = getNotesForSelectedComponent();
 
-			ArrayList<NoteEditorItem> notes = new ArrayList<>();
-			for(ComponentNote note : component.getComponentNotes()) {
-				NoteEditorItem item = new NoteEditorItem();
-				item.setType(NoteEditorItem.NOTE);
-				item.setComponentNote(note);
+			items.addAll(positionInComponentList + 1, notesToAdd);
 
-				notes.add(item);
-			}
+			DiffUtil.DiffResult result = DiffUtil.calculateDiff(new NoteEditorDiffUtil(mItems, items), true);
 
-			//Add the "add new" button
-			NoteEditorItem button = new NoteEditorItem();
-			button.setType(NoteEditorItem.ADD_NOTE_BUTTON);
-			notes.add(button);
+			mItems = items;
 
-			mItems.addAll(position + 1, notes);
+			result.dispatchUpdatesTo(this);
+		}
 
-//			for(int i = position + 1; i < position + 1 + notes.size(); i++) {
-//				notifyItemInserted(i);
-//				Print.log("note inserted, should se this " + notes.size() + " times");
+////		//If the next item is a note, just hide notes and do nothing else
+////		if(mItems.get(position + 1).getType() == NoteEditorItem.NOTE) {
+////			//Hide existing notes
+////			hideNotes();
+////		}
+//
+//		//TODO figure this out, we need to find a way to cleanly add notes. its complicated list logic that i dont want to waste time on now
+////		if(mSelectedComponent == component) {
+////			//If it's the same component do nothing
+////			return;
+////		}
+////		else {
+//			//Hide existing notes
+//			hideNotes();
+//
+//			//Set the selected component here, don't do it above because hideNotes clears it
+//			mSelectedComponent = component;
+//
+//			//Get the component based position
+//			position = getComponentIndex(component);
+//
+//			ArrayList<NoteEditorItem> notes = new ArrayList<>();
+//			for(ComponentNote note : component.getComponentNotes()) {
+//				NoteEditorItem item = new NoteEditorItem();
+//				item.setType(NoteEditorItem.NOTE);
+//				item.setComponentNote(note);
+//
+//				notes.add(item);
 //			}
-
-			//TODO notify correctly, its a bit tricky
-			notifyDataSetChanged();
-//		}
+//
+//			//Add the "add new" button
+//			NoteEditorItem button = new NoteEditorItem();
+//			button.setType(NoteEditorItem.ADD_NOTE_BUTTON);
+//			notes.add(button);
+//
+//			mItems.addAll(position + 1, notes);
+//
+////			for(int i = position + 1; i < position + 1 + notes.size(); i++) {
+////				notifyItemInserted(i);
+////				Print.log("note inserted, should se this " + notes.size() + " times");
+////			}
+//
+//			//TODO notify correctly, its a bit tricky
+//			notifyDataSetChanged();
+////		}
 	}
 
 	private class NoteItemHolder extends RecyclerView.ViewHolder {

@@ -37,4 +37,24 @@ public class NoteEditorItem {
 		mComponentNote = componentNote;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof NoteEditorItem) {
+			if(((NoteEditorItem) obj).getType() == mType) {
+				if(mType == COMPONENT)
+					return ((NoteEditorItem) obj).getComponent().equals(mComponent);
+				else if(mType == NOTE)
+					return ((NoteEditorItem) obj).getComponentNote().equals(mComponentNote);
+				else if(mType == ADD_NOTE_BUTTON)
+					return true;
+				else
+					throw new IllegalArgumentException("unrecognized type");
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+
 }

@@ -3,6 +3,8 @@ package fitness.classmate.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import fitness.classmate.util.Helpbot;
+
 public class ComponentNote implements Parcelable {
 
 	private String mMessage;
@@ -53,5 +55,15 @@ public class ComponentNote implements Parcelable {
 
 	public void setTimestamp(long timestamp) {
 		mTimestamp = timestamp;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		try {
+			ComponentNote otherNote = (ComponentNote) obj;
+			return Helpbot.equalsWithNull(((ComponentNote) obj).getMessage(), mMessage) && otherNote.getTimestamp() == mTimestamp;
+		} catch(Exception e) {
+			return false;
+		}
 	}
 }
