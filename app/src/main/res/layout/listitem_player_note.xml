@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:minHeight="48dp"
+	android:padding="8dp">
+
+	<ImageView
+		android:id="@+id/lpn_icon"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_marginRight="8dp"
+		android:src="@drawable/pogchamp"/>
+
+	<LinearLayout
+		android:id="@+id/lpn_time_section"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="8dp"
+		android:layout_alignParentRight="true"
+		android:gravity="center"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@+id/lpn_top_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="12dp"
+			tools:text="STARTS AT"
+			android:visibility="gone"/>
+
+		<TextView
+			android:id="@+id/lpn_timestamp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="20dp"
+			android:maxLines="1"
+			tools:text=":30"/>
+
+		<TextView
+			android:id="@+id/lpn_bottom_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="12dp"
+			tools:text="TO GO"
+			android:visibility="gone"/>
+
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/lpn_description"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/lpn_icon"
+		android:layout_toLeftOf="@id/lpn_time_section"
+		tools:text="4 beat jumps for 45 seconds"/>
+
+</RelativeLayout>

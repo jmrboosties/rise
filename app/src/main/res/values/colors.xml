@@ -7,4 +7,8 @@
     <color name="listitem_border_color">#cacaca</color>
 	<color name="click_color">#469bc9</color>
 	<color name="ripple">#5981c1</color>
+
+	<color name="player_note_list_background_color">#d7d7d7</color>
+	<color name="player_component_list_background_color">#d367b8f2</color>
+
 </resources>

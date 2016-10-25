@@ -19,4 +19,8 @@
 
 	<string name="add_note">Add Note</string>
 
+	<string name="to_go">TO GO</string>
+	<string name="starts_in">STARTS IN</string>
+	<string name="starts_at">STARTS AT</string>
+
 </resources>

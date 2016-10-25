@@ -1,5 +1,6 @@
 package fitness.classmate.activity;
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -323,7 +324,12 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 	}
 
 	private void onDone() {
+		//TODO update this to have correct behavior
+		//Go to player just for now
+		Intent intent = new Intent(this, ClassPlayerActivity.class);
+		intent.putExtra(Constants.CLASSMATE_CLASS, mClassmateClass);
 
+		startActivity(intent);
 	}
 
 	@Override

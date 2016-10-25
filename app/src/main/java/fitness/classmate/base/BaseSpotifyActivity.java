@@ -49,6 +49,9 @@ public abstract class BaseSpotifyActivity extends BaseActivity {
 			if(authResponse.getType() == AuthenticationResponse.Type.TOKEN) {
 				Preferences.getInstance().setSpotifyAccessToken(authResponse.getAccessToken());
 
+				//TODO the token is good but this will sometimes fail, i think its because there is a delay between the token being issued and considered valid on the back end
+				//TODO consider a delay giving it a chance to catch up?
+				//TODO currently fell back to b12 where this didnt happen
 				new SpotifyApiHelper(this).getSpotifyMe(new RetrofitCallback.UiCallback<SpotifyMe>() {
 
 					@Override
