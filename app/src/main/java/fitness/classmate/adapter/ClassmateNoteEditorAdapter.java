@@ -272,8 +272,13 @@ public class ClassmateNoteEditorAdapter extends RecyclerView.Adapter {
 		}
 
 		public void buildItem() {
-			mDescription.setText(mItems.get(getAdapterPosition()).getComponentNote().getMessage());
-			mTimestamp.setText(":30"); //TODO
+			ComponentNote note = mItems.get(getAdapterPosition()).getComponentNote();
+
+			mDescription.setText(note.getMessage());
+
+			String value = Helpbot.getDurationTimestampFromMillis(note.getTimestamp());
+
+			mTimestamp.setText(value);
 		}
 
 	}

@@ -2,25 +2,24 @@ package com.example;
 
 import java.util.ArrayList;
 
-import rx.Observable;
-import rx.functions.Action1;
-
 public class MyClass {
 
 	public static void main(String[] args) {
-		ArrayList<String> fuck = new ArrayList<>();
-		fuck.add("me");
-		fuck.add("you");
-		fuck.add("together");
+		int i = 5;
 
-		Observable.from(fuck).subscribe(new Action1<String>() {
+		Long l = new Long(5);
+		ArrayList<Long> longs = new ArrayList<>();
+		longs.add(l);
 
-			@Override
-			public void call(String s) {
-				System.out.println(s);
+		boolean containsI = false;
+		for(long lon : longs) {
+			if(lon == i) {
+				containsI = true;
+				break;
 			}
+		}
 
-		});
+		System.out.println(containsI);
 	}
 
 }

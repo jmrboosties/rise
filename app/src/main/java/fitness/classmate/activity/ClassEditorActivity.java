@@ -186,6 +186,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 
 			@Override
 			public void onClick(View v) {
+				//TODO
 				Print.log("class note clicked", note.getMessage());
 			}
 
@@ -329,7 +330,15 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		Intent intent = new Intent(this, ClassPlayerActivity.class);
 		intent.putExtra(Constants.CLASSMATE_CLASS, mClassmateClass);
 
+		mPlayerHelper.pause();
+
 		startActivity(intent);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mPlayerHelper.pause();
 	}
 
 	@Override

@@ -110,7 +110,7 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 	}
 
 	@Override
-	public void onLoginFailed(int i) {
+	public void onLoginFailed(Error error) {
 
 	}
 
@@ -155,36 +155,6 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 
 		mPlayerControlsView.showPauseIcon();
 	}
-
-//	@Override
-//	public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-//		Print.log("playerstate", playerState);
-//		Print.log("eventtype", eventType);
-//
-//		mPlayerProgressSectionView.getSeekBar().setProgress(playerState.positionInMs);
-//		mPlayerProgressSectionView.getSeekBar().setMax(playerState.durationInMs);
-//
-//		mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(playerState.positionInMs));
-//		mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(playerState.durationInMs));
-//
-//		if(mCurrentTrack == null || eventType == EventType.TRACK_CHANGED) {
-//			mCurrentTrack = getTrackFromUri(playerState.trackUri);
-//			displayClassNotes();
-//		}
-//
-//		if(eventType == EventType.PLAY || playerState.playing) {
-//			Print.log("starting progress handler");
-//
-//			generateNewPlayerProgressHandler();
-//			mPlayerProgressHandler.execute();
-//		}
-//		else if(eventType == EventType.LOST_PERMISSION) {
-//			//TODO toast saying they lost a permission probably due to playing on another device
-//		}
-//
-//		if(mPlayerHelperCallback != null)
-//			mPlayerHelperCallback.onPlaybackEvent(eventType, playerState);
-//	}
 
 	private SpotifyPlaylistTrack getTrackFromUri(String uri) {
 		if(mSpotifyPlaylist != null) {
@@ -265,22 +235,15 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		}
 		else if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
 			mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
-			mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs);
+			mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs); //FIXME crash to do with meta data being null on activity restart
 
 			mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
 			mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(metadata.currentTrack.durationMs));
 
-//			if(mCurrentTrack == null || playerEvent == PlayerEvent.kSpPlaybackNotifyTrackChanged) {
-//				mCurrentTrack = getTrackFromUri(metadata.currentTrack.uri);
-//				displayClassNotes();
-//			}
+			Print.log("starting progress handler");
 
-//			if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
-				Print.log("starting progress handler");
-
-				generateNewPlayerProgressHandler();
-				mPlayerProgressHandler.execute();
-//			}
+			generateNewPlayerProgressHandler();
+			mPlayerProgressHandler.execute();
 		}
 
 		if(mPlayerHelperCallback != null)

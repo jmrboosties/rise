@@ -41,7 +41,7 @@ dependencies {
 
     //Spotify
     compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
-    compile 'com.spotify.sdk:spotify-player-beta22-noconnect-2.20b@aar'
+    compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
 
     compile 'com.google.code.gson:gson:2.6.2'
 
