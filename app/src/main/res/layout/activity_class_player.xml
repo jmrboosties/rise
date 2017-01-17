@@ -3,18 +3,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<fitness.classmate.view.ClassComponentView
-		android:id="@+id/acp_active_component"
-		android:layout_width="match_parent"
-		android:layout_height="96dp"/>
-
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/acp_recycler_view"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_below="@id/acp_active_component"
-		android:background="@color/player_note_list_background_color"/>
-
 	<LinearLayout
 		android:id="@+id/acp_player_section"
 		android:layout_width="match_parent"
@@ -25,15 +13,22 @@
 		android:orientation="vertical">
 
 		<fitness.classmate.view.PlayerProgressSectionView
-			android:id="@+id/ace_progress_view"
+			android:id="@+id/player_progress_view"
 			android:layout_width="match_parent"
 			android:layout_height="56dp"/>
 
 		<fitness.classmate.view.PlayerControlsView
-			android:id="@+id/ace_controls_view"
+			android:id="@+id/player_controls_view"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"/>
 
 	</LinearLayout>
+
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/acp_recycler_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@id/acp_player_section"
+		android:background="@color/player_note_list_background_color"/>
 
 </RelativeLayout>

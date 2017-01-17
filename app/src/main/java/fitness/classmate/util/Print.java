@@ -57,11 +57,11 @@ public class Print {
 		}
 	}
 
-	public static void exception(Exception e) {
+	public static void exception(Throwable e) {
 		exception(e, true);
 	}
 
-	public static void exception(Exception e, boolean report) {
+	public static void exception(Throwable e, boolean report) {
 		if(Constants.IS_DEBUG_MODE)
 			e.printStackTrace();
 	}

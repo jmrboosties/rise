@@ -331,6 +331,7 @@ public class ClassEditorActivity extends BaseActivity implements PlayerHelper.Pl
 		intent.putExtra(Constants.CLASSMATE_CLASS, mClassmateClass);
 
 		mPlayerHelper.pause();
+		Spotify.destroyPlayer(this);
 
 		startActivity(intent);
 	}

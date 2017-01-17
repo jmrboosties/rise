@@ -11,11 +11,8 @@ import java.util.ArrayList;
 public class ClassmateClass implements Parcelable, DatabaseObject {
 
 	private int mId;
-
 	private String mTitle;
-
 	private String mAuthor;
-
 	private String mCreatedAt;
 
 	private ArrayList<ClassComponent> mComponents = new ArrayList<>();
@@ -23,11 +20,19 @@ public class ClassmateClass implements Parcelable, DatabaseObject {
 	public ClassmateClass() { }
 
 	protected ClassmateClass(Parcel in) {
+		mId = in.readInt();
+		mTitle = in.readString();
+		mAuthor = in.readString();
+		mCreatedAt = in.readString();
 		mComponents = in.createTypedArrayList(ClassComponent.CREATOR);
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(mId);
+		dest.writeString(mTitle);
+		dest.writeString(mAuthor);
+		dest.writeString(mCreatedAt);
 		dest.writeTypedList(mComponents);
 	}
 
@@ -97,4 +102,5 @@ public class ClassmateClass implements Parcelable, DatabaseObject {
 	public void setId(int id) {
 		mId = id;
 	}
+
 }

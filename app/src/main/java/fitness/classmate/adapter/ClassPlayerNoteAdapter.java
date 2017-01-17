@@ -118,4 +118,6 @@ public class ClassPlayerNoteAdapter extends RecyclerView.Adapter {
 
 	}
 
+
+
 }

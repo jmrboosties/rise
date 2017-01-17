@@ -8,14 +8,10 @@ import fitness.classmate.R;
 import fitness.classmate.adapter.ClassPlaylistEditorAdapter;
 import fitness.classmate.base.BaseSpotifyActivity;
 import fitness.classmate.decorator.ComponentDecorator;
-import fitness.classmate.model.*;
-import fitness.classmate.net.RetrofitCallback;
-import fitness.classmate.net.SpotifyApiHelper;
-import fitness.classmate.net.model.GetSpotifyPlaylistTracksResponse;
+import fitness.classmate.model.ClassmateClass;
+import fitness.classmate.model.SpotifyPlaylist;
 import fitness.classmate.util.Print;
 import fitness.classmate.view.ClassGraphLayoutManager;
-import retrofit2.Call;
-import retrofit2.Response;
 import rx.functions.Action1;
 
 import java.util.ArrayList;
@@ -51,55 +47,55 @@ public class ClassPlaylistEditorActivity extends BaseSpotifyActivity {
 //			throw new NullPointerException("missing playlist");
 	}
 
-	private void downloadPlaylistTracks(String url) {
-		new SpotifyApiHelper(this).getSpotifyPlaylistTracksWithUrl(url, new RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse>() {
+//	private void downloadPlaylistTracks(String url) {
+//		new SpotifyApiHelper(this).getSpotifyPlaylistTracksWithUrl(url, new RetrofitCallback.UiCallback<GetSpotifyPlaylistTracksResponse>() {
+//
+//			@Override
+//			public void onResponse(GetSpotifyPlaylistTracksResponse response) {
+//				mSpotifyPlaylist.addTracks(response.getSpotifyTracks());
+//
+//				if(response.getNextPageUrl() != null)
+//					downloadPlaylistTracks(response.getNextPageUrl());
+//				else {
+//					//Attach playlist to class
+//					attachPlaylistToClass(mSpotifyPlaylist);
+//					hideProgressDialog();
+//				}
+//			}
+//
+//			@Override
+//			public void onErrorResponse(Call<GetSpotifyPlaylistTracksResponse> call, Response<GetSpotifyPlaylistTracksResponse> response) {
+//				if(mSpotifyPlaylist.getSpotifyTracks().size() > 0) {
+//					//Continue anyway since the error could have happened in next page url
+//					attachPlaylistToClass(mSpotifyPlaylist);
+//					hideProgressDialog();
+//				}
+//				else {
+//					//TODO error out
+//					hideProgressDialog();
+//				}
+//			}
+//
+//		});
+//	}
 
-			@Override
-			public void onResponse(GetSpotifyPlaylistTracksResponse response) {
-				mSpotifyPlaylist.addTracks(response.getSpotifyTracks());
-
-				if(response.getNextPageUrl() != null)
-					downloadPlaylistTracks(response.getNextPageUrl());
-				else {
-					//Attach playlist to class
-					attachPlaylistToClass(mSpotifyPlaylist);
-					hideProgressDialog();
-				}
-			}
-
-			@Override
-			public void onErrorResponse(Call<GetSpotifyPlaylistTracksResponse> call, Response<GetSpotifyPlaylistTracksResponse> response) {
-				if(mSpotifyPlaylist.getSpotifyTracks().size() > 0) {
-					//Continue anyway since the error could have happened in next page url
-					attachPlaylistToClass(mSpotifyPlaylist);
-					hideProgressDialog();
-				}
-				else {
-					//TODO error out
-					hideProgressDialog();
-				}
-			}
-
-		});
-	}
-
-	private void attachPlaylistToClass(SpotifyPlaylist playlist) {
-		for(int i = 0; i < mClassmateClass.getComponents().size(); i++) {
-			//Get playlist item at same index
-			SpotifyPlaylistTrack track = playlist.getSpotifyTracks().get(i);
-
-			//Get component
-			ClassComponent component = mClassmateClass.getComponents().get(i);
-
-			//Attach
-			ComponentTrack componentTrack = new ComponentTrack();
-			componentTrack.setSpotifyPlaylistTrack(track);
-
-			component.setComponentTrack(componentTrack);
-		}
-
-		Print.log("attached playlist to class");
-	}
+//	private void attachPlaylistToClass(SpotifyPlaylist playlist) {
+//		for(int i = 0; i < mClassmateClass.getComponents().size(); i++) {
+//			//Get playlist item at same index
+//			SpotifyPlaylistTrack track = playlist.getSpotifyTracks().get(i);
+//
+//			//Get component
+//			ClassComponent component = mClassmateClass.getComponents().get(i);
+//
+//			//Attach
+//			ComponentTrack componentTrack = new ComponentTrack();
+//			componentTrack.setSpotifyPlaylistTrack(track);
+//
+//			component.setComponentTrack(componentTrack);
+//		}
+//
+//		Print.log("attached playlist to class");
+//	}
 
 	@Override
 	protected void onSpotifyConnected() {
@@ -183,17 +179,17 @@ public class ClassPlaylistEditorActivity extends BaseSpotifyActivity {
 //	}
 
 	//TODO remove this
-	private ClassComponent buildComponentFromString(String s) {
-		ClassComponent classComponent = new ClassComponent();
-		classComponent.setName(s);
-
-		float f = s.length() / 8f;
-		int intensity = Math.round(f * 4);
-
-		classComponent.setIntensity(intensity);
-
-		return classComponent;
-	}
+//	private ClassComponent buildComponentFromString(String s) {
+//		ClassComponent classComponent = new ClassComponent();
+//		classComponent.setName(s);
+//
+//		float f = s.length() / 8f;
+//		int intensity = Math.round(f * 4);
+//
+//		classComponent.setIntensity(intensity);
+//
+//		return classComponent;
+//	}
 
 	private void buildPlaylistAdapter() {
 		ArrayList<String> componentStrings = new ArrayList<>();

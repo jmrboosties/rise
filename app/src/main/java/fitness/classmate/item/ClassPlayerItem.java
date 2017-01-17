@@ -18,6 +18,7 @@ public class ClassPlayerItem {
 
 	public void setComponent(ClassComponent component) {
 		mComponent = component;
+		mType = COMPONENT;
 	}
 
 	public ComponentNote getNote() {
@@ -26,6 +27,7 @@ public class ClassPlayerItem {
 
 	public void setNote(ComponentNote note) {
 		mNote = note;
+		mType = NOTE;
 	}
 
 	public int getType() {

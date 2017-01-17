@@ -4,10 +4,16 @@ import android.os.AsyncTask;
 import android.widget.SeekBar;
 import com.spotify.sdk.android.player.*;
 import com.spotify.sdk.android.player.Error;
+import fitness.classmate.model.ClassComponent;
+import fitness.classmate.model.ClassmateClass;
 import fitness.classmate.model.SpotifyPlaylist;
 import fitness.classmate.model.SpotifyPlaylistTrack;
+import fitness.classmate.rx.ClassProgress;
 import fitness.classmate.view.PlayerControlsView;
 import fitness.classmate.view.PlayerProgressSectionView;
+import rx.subjects.PublishSubject;
+
+import java.util.HashMap;
 
 /**
  * Does a bunch of shit related to the player so you only have to deal with it once.
@@ -20,8 +26,19 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 	private PlayerProgressHandler mPlayerProgressHandler;
 	private PlayerControlsView mPlayerControlsView;
 
+	private int mMode;
+
 	private SpotifyPlaylist mSpotifyPlaylist;
 	private SpotifyPlaylistTrack mCurrentTrack;
+	private ClassmateClass mClassmateClass;
+
+	private PublishSubject<ClassProgress> mProgressSubject;
+
+	//To quickly get track index from uri
+	private HashMap<String, Integer> mUriIndexMap = new HashMap<>();
+
+	public static final int MODE_SINGLE = 0;
+	public static final int MODE_PLAYLIST = 1;
 
 	private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
 
@@ -58,7 +75,7 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		mPlayerControlsView.setControlsCallback(this);
 	}
 
-	private void setSpotifyPlaylist(SpotifyPlaylist playlist) {
+	public void setSpotifyPlaylist(SpotifyPlaylist playlist) {
 		mSpotifyPlaylist = playlist;
 	}
 
@@ -89,6 +106,30 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 			}
 
 		});
+
+		mProgressSubject = PublishSubject.create();
+//
+//		Observer observer = new Observer() {
+//
+//			@Override
+//			public void onCompleted() {
+//				Print.log("on completed");
+//			}
+//
+//			@Override
+//			public void onError(Throwable e) {
+//
+//			}
+//
+//			@Override
+//			public void onNext(Object o) {
+//				Print.log("next: " + o);
+//			}
+//
+//		};
+//
+//		mProgressSubject.subscribe(observer);
+//		mProgressSubject.onNext((long) 1000);
 	}
 
 	public PlaybackState getPlaybackState() {
@@ -129,6 +170,30 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		if(track != mCurrentTrack) {
 			mCurrentTrack = track;
 			pause();
+		}
+	}
+
+	public void playClass() {
+//		PlaybackState state = mPlayer.getPlaybackState();
+//		Metadata metadata = mPlayer.getMetadata();
+//
+////		if(metadata == null) {
+//			mPlayer.playUri(mOperationCallback, mSpotifyPlaylist.getUri(), 0, 0);
+////		}
+////		else if(!state.isPlaying)
+////			mPlayer.resume(mOperationCallback);
+
+		//TODO might need more logic here
+		for(int i = 0; i < mClassmateClass.getComponents().size(); i++) {
+			ClassComponent component = mClassmateClass.getComponents().get(i);
+
+			if(i == 0) {
+				mCurrentTrack = component.getComponentTrack().getSpotifyPlaylistTrack();
+				mPlayer.playUri(mOperationCallback, mCurrentTrack.getUri(), 0, 0);
+			}
+			else {
+				mPlayer.queue(mOperationCallback, component.getComponentTrack().getSpotifyPlaylistTrack().getUri());
+			}
 		}
 	}
 
@@ -176,13 +241,20 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		PlaybackState state = mPlayer.getPlaybackState();
 		Metadata metadata = mPlayer.getMetadata();
 
-		if(mCurrentTrack == null) {
-			//TODO something?
-			return;
-		}
+		if(metadata == null || metadata.currentTrack == null || !mCurrentTrack.getUri().equals(metadata.currentTrack.uri)) {
+			if(mMode == MODE_SINGLE) {
+				if(mCurrentTrack == null) {
+					//TODO something?
+					return;
+				}
 
-		if(metadata == null || metadata.currentTrack == null || !mCurrentTrack.getUri().equals(metadata.currentTrack.uri))
-			playTrack(mCurrentTrack);
+				playTrack(mCurrentTrack);
+			}
+			else if(mMode == MODE_PLAYLIST)
+				playClass();
+			else
+				throw new RuntimeException("this should never happen");
+		}
 		else if(metadata.currentTrack.uri != null) {
 			if(state.isPlaying)
 				pause();
@@ -225,25 +297,28 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		PlaybackState state = mPlayer.getPlaybackState();
 		Metadata metadata = mPlayer.getMetadata();
 
-		if(mCurrentTrack == null || playerEvent == PlayerEvent.kSpPlaybackNotifyTrackChanged) {
-			setCurrentTrack(getTrackFromUri(metadata.currentTrack.uri));
-		}
-
 		if(playerEvent == PlayerEvent.kSpPlaybackNotifyLostPermission) {
 			//TODO toast saying they lost a permission probably due to playing on another device
 			return;
 		}
-		else if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
-			mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
-			mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs); //FIXME crash to do with meta data being null on activity restart
+		else if(metadata.currentTrack != null) {
+			if((mCurrentTrack == null || playerEvent == PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
+				Print.log("changing track", metadata.currentTrack.name);
+				setCurrentTrack(getTrackFromUri(metadata.currentTrack.uri));
+			}
 
-			mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
-			mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(metadata.currentTrack.durationMs));
+			if(playerEvent == PlayerEvent.kSpPlaybackNotifyPlay || state.isPlaying) {
+				mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
+				mPlayerProgressSectionView.getSeekBar().setMax((int) metadata.currentTrack.durationMs); //FIXME crash to do with meta data being null on activity restart
 
-			Print.log("starting progress handler");
+				mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
+				mPlayerProgressSectionView.getDuration().setText(Helpbot.getDurationTimestampFromMillis(metadata.currentTrack.durationMs));
 
-			generateNewPlayerProgressHandler();
-			mPlayerProgressHandler.execute();
+				Print.log("starting progress handler");
+
+				generateNewPlayerProgressHandler();
+				mPlayerProgressHandler.execute();
+			}
 		}
 
 		if(mPlayerHelperCallback != null)
@@ -255,7 +330,34 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 
 	}
 
+//	public void setProgressSubscriber(Subscriber<Long> progressSubscriber) {
+//		mProgressSubject = progressSubscriber;
+//	}
+
+	public void setMode(int mode) {
+		mMode = mode;
+	}
+
+	public void setClassmateClass(ClassmateClass classmateClass) {
+		mClassmateClass = classmateClass;
+
+		for(int i = 0; i < mClassmateClass.getComponents().size(); i++) {
+			ClassComponent component = mClassmateClass.getComponents().get(i);
+			mUriIndexMap.put(component.getComponentTrack().getSpotifyPlaylistTrack().getUri(), i);
+		}
+	}
+
+	public PublishSubject<ClassProgress> getProgressSubject() {
+		return mProgressSubject;
+	}
+
 	private class PlayerProgressHandler extends AsyncTask<Void, Void, Void> {
+
+		private ClassProgress aClassProgress;
+
+		public PlayerProgressHandler() {
+			aClassProgress = new ClassProgress();
+		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
@@ -280,6 +382,13 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 				if(state.isPlaying) {
 					mPlayerProgressSectionView.getSeekBar().setProgress((int) state.positionMs);
 					mPlayerProgressSectionView.getTimeProgress().setText(Helpbot.getDurationTimestampFromMillis(state.positionMs));
+
+					if(mProgressSubject != null) {
+						aClassProgress.time = state.positionMs;
+						aClassProgress.componentIndex = mUriIndexMap.get(mPlayer.getMetadata().currentTrack.uri);
+
+						mProgressSubject.onNext(aClassProgress);
+					}
 				}
 				else
 					cancelPlayerProgressHandler();
@@ -298,8 +407,12 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 
 	private void cancelPlayerProgressHandler() {
 		Print.log("got cancelled!");
-		if(mPlayerProgressHandler != null)
+		if(mPlayerProgressHandler != null) {
 			mPlayerProgressHandler.cancel(true);
+
+//			if(mProgressSubject != null)
+//				mProgressSubject.onCompleted();
+		}
 
 		mPlayerProgressHandler = null;
 	}
@@ -339,6 +452,12 @@ public class PlayerHelper implements ConnectionStateCallback, PlayerControlsView
 		public Builder(SpotifyPlayer player) {
 			mPlayerHelper = new PlayerHelper();
 			mPlayerHelper.setPlayer(player);
+		}
+
+		public Builder setMode(int mode) {
+			//Defaults to single mode
+			mPlayerHelper.setMode(mode);
+			return this;
 		}
 
 		public Builder setPlayerProgressSectionView(PlayerProgressSectionView playerProgressSectionView) {
